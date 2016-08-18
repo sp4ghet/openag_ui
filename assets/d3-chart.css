@@ -1,0 +1,221 @@
+.chart {
+  background: #f4f4f4;
+}
+
+.chart-svg {
+  position: absolute;
+  font: 10px sans-serif;
+}
+
+.chart-tick--line {
+  stroke: #d8d8d8;
+}
+
+.chart-tick--text {
+  font-size: 11px;
+  fill: #b1b1b1;
+}
+
+.chart {
+  overflow: hidden;
+  position: relative;
+}
+
+.chart-desired {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1px;
+  opacity: 0.25;
+  /*stroke-dasharray: 1, 6;*/
+}
+
+.chart-measured {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1px;
+}
+
+.chart-dot {
+  fill: white;
+  stroke: #f4f4f4;
+  stroke-width: 1.5px;
+}
+
+.chart-xhair {
+  background: #ff8300;
+  /* This should not interact with mouse */
+  pointer-events: none;
+  height: 100%;
+  width: 1px;
+  position: absolute;
+  top: 0;
+}
+
+.chart-xhair--tick {
+  border: 5px solid #ff8300;
+  border-color: transparent transparent #ff8300 transparent;
+  margin-left: -5px;
+  height: 0;
+  width: 0;
+  position: absolute;
+  z-index: 3;
+}
+
+.chart-tooltip {
+  background: #fff;
+  bottom: 70px;
+  border-top: 3px solid #ff8300;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  /* width and margin are set by JS dynamically */
+  position: absolute;
+  /* Needed to get around hw accel bug in Chrome */
+  z-index: 2;
+}
+
+.chart-readouts {
+  left: 160px;
+  top: 20px;
+  position: absolute;
+}
+
+.chart-readout {
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.chart-readout--title,
+.chart-readout--value,
+.chart-readout--legend,
+.chart-readout--target,
+.chart-readout--desired,
+.chart-readout--measured {
+  display: inline-block;
+  margin-right: .5em;
+}
+
+.chart-readout--target {
+  margin-left: .25em;
+}
+
+.chart-readout--legend {
+  border-radius: 50%;
+  height: 8px;
+  width: 8px;
+}
+
+.chart-readout--desired,
+.chart-readout--measured {
+  font-weight: bold;
+}
+
+.chart-timestamp {
+  left: 24px;
+  top: 22px;
+  position: absolute;
+  width: 136px;
+}
+
+.chart-timestamp--time {
+  font-size: 17px;
+}
+.chart-timestamp--day {
+  color: #b1b1b1;
+  font-size: 11px;
+}
+
+.chart-scrubber {
+  background-color: #ffffff;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  height: 40px;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  /* Needed to get around hw accel bug in Chrome */
+  z-index: 3;
+}
+
+.chart-progress {
+  background: url(stripes-dark-blue.png) repeat left center #ddd;
+  background-size: auto 40px;
+  padding-right: 5px;
+  width: 0;
+  height: 40px;
+}
+
+.chart-handle {
+  bottom: 0;
+  cursor: -webkit-grab;
+  cursor: grab;
+  position: absolute;
+  height: 60px;
+  width: 12px;
+}
+.chart-handle--dragging {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+
+.chart-handle--cap {
+  background: #ff8300;
+  border-radius: 100%;
+  height: 12px;
+  width: 12px;
+}
+
+.chart-handle--line {
+  background: #ff8300;
+  margin-left: 5px;
+  height: 48px;
+  width: 2px;
+}
+
+.chart-loading--img {
+  height: 80px;
+  width: 80px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-70%);
+}
+
+.chart-empty {
+  background: #d8d8d8;
+  border-radius: 8px;
+  padding: 24px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-70%);
+}
+
+/* Chart toolbox
+----------------------------------------------------------------------------- */
+
+.chart-toolbox {
+  background: #fff;
+  border-radius: 28px;
+  height: 56px;
+  min-width: 56px;
+  position: absolute;
+  right: 24px;
+  top: 24px;
+}
+
+.chart-toolbox,
+.chart-toolbox li {
+  list-style: none;
+  padding: 0;
+  margin: 0;  
+}
+
+.chart-toolbox--cmd {
+  cursor: pointer;
+  height: 56px;
+  width: 56px;
+}
+
+.chart-toolbox--cmd-export {
+  background-image: url(sprite.png);
+  background-size: 100px auto;
+  background-position: 0 -800px;
+}
