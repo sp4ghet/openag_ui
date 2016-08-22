@@ -24350,7 +24350,7 @@ var viewConfigured = function viewConfigured(model, address) {
   }, [(0, _reflex.thunk)('app-nav', AppNav.view, model.appNav, (0, _reflex.forward)(address, TagAppNav)), (0, _reflex.thunk)('banner', Banner.view, model.banner, (0, _reflex.forward)(address, TagBanner), 'global-banner'), (0, _reflex.thunk)('environment', Environment.view, model.environment, (0, _reflex.forward)(address, TagEnvironment)), (0, _reflex.thunk)('recipes', Recipes.view, model.recipes, (0, _reflex.forward)(address, TagRecipes))]);
 };
 
-},{"../openag-config.json":94,"../package.json":95,"./app/nav":97,"./common/banner":99,"./common/cursor":102,"./common/lang":109,"./common/prelude":114,"./common/request":115,"./common/stache":119,"./common/unknown":121,"./common/url":122,"./environment":127,"./environments":133,"./first-time-use":134,"./lang/functional":136,"./persistence":138,"./recipes":140,"reflex":65}],97:[function(require,module,exports){
+},{"../openag-config.json":94,"../package.json":95,"./app/nav":97,"./common/banner":99,"./common/cursor":102,"./common/lang":109,"./common/prelude":114,"./common/request":115,"./common/stache":119,"./common/unknown":121,"./common/url":122,"./environment":127,"./environments":134,"./first-time-use":135,"./lang/functional":137,"./persistence":139,"./recipes":141,"reflex":65}],97:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -25066,7 +25066,7 @@ var sync = exports.sync = function sync(db, replica) {
   }));
 };
 
-},{"../common/result":116,"../lang/functional":136,"reflex":65}],104:[function(require,module,exports){
+},{"../common/result":116,"../lang/functional":137,"reflex":65}],104:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -25323,7 +25323,7 @@ var blur = exports.blur = function blur(model) {
 var onFocus = exports.onFocus = (0, _prelude.port)((0, _functional.constant)(Focus));
 var onBlur = exports.onBlur = (0, _prelude.port)((0, _functional.constant)(Blur));
 
-},{"../common/prelude":114,"../common/unknown":121,"../lang/functional":136,"reflex":65}],107:[function(require,module,exports){
+},{"../common/prelude":114,"../common/unknown":121,"../lang/functional":137,"reflex":65}],107:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -25530,7 +25530,7 @@ var updateWithID = exports.updateWithID = function updateWithID(update, tag, mod
   }
 };
 
-},{"../common/prelude":114,"../common/unknown":121,"../lang/functional":136,"reflex":65}],108:[function(require,module,exports){
+},{"../common/prelude":114,"../common/unknown":121,"../lang/functional":137,"reflex":65}],108:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -25741,7 +25741,7 @@ var onSelect = exports.onSelect = (0, _prelude.annotate)(Edit.onSelect, EditActi
 var onFocus = exports.onFocus = (0, _prelude.annotate)(Focus.onFocus, FocusAction);
 var onBlur = exports.onBlur = (0, _prelude.annotate)(Focus.onBlur, FocusAction);
 
-},{"../common/control":101,"../common/editable":105,"../common/focusable":106,"../common/prelude":114,"../common/unknown":121,"../lang/functional":136,"reflex":65}],109:[function(require,module,exports){
+},{"../common/control":101,"../common/editable":105,"../common/focusable":106,"../common/prelude":114,"../common/unknown":121,"../lang/functional":137,"reflex":65}],109:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -25975,7 +25975,7 @@ var update = exports.update = function update(model, action) {
   }), _reflex.Effects.receive(Schedule(calcDelay(model.timeout, model.misses)))] : action.type === 'Ping' ? [model, _reflex.Effects.none] : Unknown.update(model, action);
 };
 
-},{"../common/prelude":114,"../common/unknown":121,"../lang/functional":136,"reflex":65}],114:[function(require,module,exports){
+},{"../common/prelude":114,"../common/unknown":121,"../lang/functional":137,"reflex":65}],114:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -26208,7 +26208,7 @@ var post = exports.post = function post(url, body) {
   }));
 };
 
-},{"../common/lang":109,"../common/prelude":114,"../common/result":116,"../lang/functional":136,"reflex":65,"whatwg-fetch":92}],116:[function(require,module,exports){
+},{"../common/lang":109,"../common/prelude":114,"../common/result":116,"../lang/functional":137,"reflex":65,"whatwg-fetch":92}],116:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26515,7 +26515,7 @@ var out = exports.out = function out(model) {
 var onMouseOver = exports.onMouseOver = (0, _prelude.port)((0, _functional.constant)(Over));
 var onMouseOut = exports.onMouseOut = (0, _prelude.port)((0, _functional.constant)(Out));
 
-},{"../common/prelude":114,"../common/unknown":121,"../lang/functional":136,"reflex":65}],121:[function(require,module,exports){
+},{"../common/prelude":114,"../common/unknown":121,"../lang/functional":137,"reflex":65}],121:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26946,7 +26946,7 @@ var readValue = exports.readValue = function readValue(model) {
   return model.edit.value;
 };
 
-},{"../common/attr":98,"../common/control":101,"../common/editable":105,"../common/focusable":106,"../common/prelude":114,"../common/unknown":121,"../lang/functional":136,"reflex":65}],124:[function(require,module,exports){
+},{"../common/attr":98,"../common/control":101,"../common/editable":105,"../common/focusable":106,"../common/prelude":114,"../common/unknown":121,"../lang/functional":137,"reflex":65}],124:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -27525,6 +27525,8 @@ var _sidebar = require('./environment/sidebar');
 
 var Sidebar = _interopRequireWildcard(_sidebar);
 
+var _datapoints = require('./environment/datapoints');
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 // Variable key for environmental data point that represents temperature.
@@ -27566,7 +27568,7 @@ var OpenExporter = TagExporter(Exporter.Open);
 var ConfigureExporter = (0, _functional.compose)(TagExporter, Exporter.Configure);
 
 var TagSidebar = function TagSidebar(action) {
-  return action.type === 'RequestOpenRecipes' ? RequestOpenRecipes : (0, _prelude.tagged)('Sidebar', action);
+  return action.type === 'RequestOpenRecipes' ? RequestOpenRecipes : action.type === 'DropMarker' ? DropMarker : (0, _prelude.tagged)('Sidebar', action);
 };
 
 var SetRecipe = exports.SetRecipe = (0, _functional.compose)(TagSidebar, Sidebar.SetRecipe);
@@ -27600,6 +27602,8 @@ var MissPoll = TagPoll(Poll.Miss);
 var TagChart = (0, _prelude.tag)('Chart');
 var AddChartData = (0, _functional.compose)(TagChart, Chart.AddData);
 var ChartLoading = (0, _functional.compose)(TagChart, Chart.Loading);
+// Drop a marker (in the chart)
+var DropMarker = TagChart(Chart.DropMarker);
 
 // Send an alert. We use this to send up problems to be displayed in banner.
 var AlertBanner = (0, _prelude.tag)('AlertBanner');
@@ -27816,23 +27820,8 @@ var compareByTimestamp = function compareByTimestamp(a, b) {
   return a.timestamp > b.timestamp ? 1 : -1;
 };
 
-// @TODO we should distinguish between datapoint types so we know what values
-// to parse to.
-var readDataPoint = function readDataPoint(_ref2) {
-  var variable = _ref2.variable;
-  var is_desired = _ref2.is_desired;
-  var timestamp = _ref2.timestamp;
-  var value = _ref2.value;
-  return {
-    variable: variable,
-    timestamp: timestamp,
-    is_desired: is_desired,
-    value: Number.parseFloat(value)
-  };
-};
-
 var readData = function readData(record) {
-  var data = readRecord(record).map(readDataPoint);
+  var data = readRecord(record);
   data.sort(compareByTimestamp);
   return data;
 };
@@ -27869,13 +27858,13 @@ var findAirTemperature = function findAirTemperature(data) {
   return (0, _maybe.map)((0, _find.findRight)(data, isAirTemperature), getValue);
 };
 
-},{"../openag-config.json":94,"./common/cursor":102,"./common/lang":109,"./common/maybe":110,"./common/poll":113,"./common/prelude":114,"./common/request":115,"./common/result":116,"./common/stache":119,"./common/unknown":121,"./environment/chart":128,"./environment/exporter":129,"./environment/sidebar":130,"./environment/toolbox":132,"./lang/find":135,"./lang/functional":136,"reflex":65}],128:[function(require,module,exports){
+},{"../openag-config.json":94,"./common/cursor":102,"./common/lang":109,"./common/maybe":110,"./common/poll":113,"./common/prelude":114,"./common/request":115,"./common/result":116,"./common/stache":119,"./common/unknown":121,"./environment/chart":128,"./environment/datapoints":129,"./environment/exporter":130,"./environment/sidebar":131,"./environment/toolbox":133,"./lang/find":136,"./lang/functional":137,"reflex":65}],128:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.view = exports.update = exports.init = exports.Model = exports.Ready = exports.Loading = exports.AddData = exports.SetData = exports.MoveXhair = exports.Resize = undefined;
+exports.view = exports.update = exports.init = exports.Model = exports.Ready = exports.Loading = exports.AddData = exports.SetData = exports.MoveXhair = exports.DropMarker = exports.Resize = undefined;
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -27921,6 +27910,8 @@ var _find = require('../lang/find');
 
 var _virtualDom = require('../driver/virtual-dom');
 
+var _datapoints = require('../environment/datapoints');
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 var CHART_CONFIG = Config.chart;
@@ -27952,6 +27943,8 @@ var Resize = exports.Resize = function Resize(width, height) {
     height: height
   };
 };
+
+var DropMarker = exports.DropMarker = { type: 'DropMarker' };
 
 var MoveXhair = exports.MoveXhair = (0, _prelude.tag)('MoveXhair');
 var SetData = exports.SetData = (0, _prelude.tag)('SetData');
@@ -28019,13 +28012,19 @@ var readGroupFromConfig = function readGroupFromConfig(_ref) {
 //
 // Output:
 //
-//     {
-//       air_temperature: {
+//     [
+//       {
+//         variable: 'air_temperature',
 //         measured: [dataPoint, dataPoint, ...],
-//         desired: [dataPoint, dataPoint, ...]
+//         desired: [dataPoint, dataPoint, ...],
+//         title: "Temperature",
+//         unit: "\u00B0",
+//         min: 7.2,
+//         max: 48.8,
+//         color: '#ff8300'
 //       },
 //       ...
-//     }
+//     ]
 var readSeries = function readSeries(model) {
   var variables = model.variables;
   var config = model.config;
@@ -28048,7 +28047,7 @@ var insertDataPoint = function insertDataPoint(index, dataPoint) {
   // Check that this is a known variable in our configuration
   // File datapoint away in measured or desired, making sure that it is
   // monotonic (that a new datapoint comes after any older datapoints).
-  if (index[variable] && isMonotonic(index[variable][type], dataPoint, readX)) {
+  if (index[variable]) {
     index[variable][type].push(dataPoint);
   }
 
@@ -28060,11 +28059,11 @@ var init = exports.init = function init() {
 };
 
 var update = exports.update = function update(model, action) {
-  return action.type === 'Scrubber' ? updateScrub(model, action.source) : action.type === 'MoveXhair' ? [(0, _prelude.merge)(model, { xhairAt: action.source }), _reflex.Effects.none] : action.type === 'AddData' ? addData(model, action.source) : action.type === 'Resize' ? updateSize(model, action.width, action.height) : action.type === 'Loading' ? [(0, _prelude.merge)(model, { isLoading: true }), _reflex.Effects.none] : action.type === 'Ready' ? [(0, _prelude.merge)(model, { isLoading: false }), _reflex.Effects.none] : Unknown.update(model, action);
+  return action.type === 'Scrubber' ? updateScrub(model, action.source) : action.type === 'MoveXhair' ? [(0, _prelude.merge)(model, { xhairAt: action.source }), _reflex.Effects.none] : action.type === 'AddData' ? addData(model, action.source) : action.type === 'Resize' ? updateSize(model, action.width, action.height) : action.type === 'Loading' ? [(0, _prelude.merge)(model, { isLoading: true }), _reflex.Effects.none] : action.type === 'Ready' ? [(0, _prelude.merge)(model, { isLoading: false }), _reflex.Effects.none] : action.type === 'DropMarker' ? dropMarker(model) : Unknown.update(model, action);
 };
 
 var addData = function addData(model, data) {
-  var variables = concatMonotonic(model.variables, data, MAX_DATAPOINTS, readX);
+  var variables = concatSortedBuffer(model.variables, data, MAX_DATAPOINTS, readX);
 
   // If variables model actually updated, then create new chart model.
   if (model.variables !== variables) {
@@ -28083,6 +28082,13 @@ var addData = function addData(model, data) {
   } else {
     return [model, _reflex.Effects.none];
   }
+};
+
+var dropMarker = function dropMarker(model) {
+  var mark = (0, _datapoints.marker)(secondsNow(), '');
+  var variables = insertSortedBuffer(model.variables, mark, MAX_DATAPOINTS, readX);
+
+  return [(0, _prelude.merge)(model, { variables: variables }), _reflex.Effects.none];
 };
 
 var updateSize = function updateSize(model, width, height) {
@@ -28169,6 +28175,9 @@ var viewData = function viewData(model, address) {
 
   var extentX = (0, _d3Array.extent)(variables, readX);
   var series = readSeries(model);
+  // @TODO it may be better to do a single pass in readSeries and build up
+  // the full index that way.
+  var markers = variables.filter(_datapoints.isMarker);
 
   var scrubberAt = scrubber.coords;
   var isDragging = scrubber.isDragging;
@@ -28211,14 +28220,17 @@ var viewData = function viewData(model, address) {
   var axis = renderAxis(x, svgHeight);
   children.push(axis);
 
+  var userMarkers = renderUserMarkers(markers, x, svgHeight, readX);
+  children.push(userMarkers);
+
   if (recipeStart) {
-    var recipeStartMarker = renderMarker(x(recipeStart), svgHeight, (0, _lang.localize)('Recipe Started'));
+    var recipeStartMarker = renderAxisMarker(x(recipeStart), svgHeight, (0, _lang.localize)('Recipe Started'));
 
     children.push(recipeStartMarker);
   }
 
   if (recipeEnd) {
-    var recipeEndMarker = renderMarker(x(recipeEnd), svgHeight, (0, _lang.localize)('Recipe Ended'));
+    var recipeEndMarker = renderAxisMarker(x(recipeEnd), svgHeight, (0, _lang.localize)('Recipe Ended'));
     children.push(recipeEndMarker);
   }
 
@@ -28377,9 +28389,25 @@ var renderReadout = function renderReadout(group, measured, desired) {
   }, [desired])]);
 };
 
-var renderMarker = function renderMarker(x, height, text) {
+var renderAxisMarker = function renderAxisMarker(x, height, text) {
   return svgG({
     className: 'chart-tick',
+    transform: 'translate(' + x + ', 0)'
+  }, [svgLine({
+    className: 'chart-tick--line',
+    x2: 0.5,
+    y1: 0.5,
+    y2: height
+  }), svgText({
+    className: 'chart-tick--text',
+    x: 6.0,
+    y: 16.0
+  }, [text])]);
+};
+
+var renderUserMarker = function renderUserMarker(x, height, text) {
+  return svgG({
+    className: 'chart-tick chart-tick--user',
     transform: 'translate(' + x + ', 0)'
   }, [svgLine({
     className: 'chart-tick--line',
@@ -28398,7 +28426,18 @@ var renderAxis = function renderAxis(scale, height) {
   return svgG({
     className: 'chart-time-axis'
   }, ticks.map(function (tick) {
-    return renderMarker(scale(tick), height, formatTick(tick));
+    return renderAxisMarker(scale(tick), height, formatTick(tick));
+  }));
+};
+
+var renderUserMarkers = function renderUserMarkers(markers, scale, height, readX) {
+  return svgG({
+    className: 'chart-user-markers'
+  }, markers.map(function (marker) {
+    var timestamp = readX(marker);
+    var x = scale(timestamp);
+    var text = formatTick(timestamp);
+    return renderUserMarker(x, height, text);
   }));
 };
 
@@ -28539,58 +28578,57 @@ var getVariable = function getVariable(x) {
   return x.variable;
 };
 
-// Advance buffer by one item, removing item to stay under limit.
-var advanceBuffer = function advanceBuffer(buffer, item, limit) {
-  if (buffer.length < limit) {
-    buffer.push(item);
-  } else {
-    buffer.shift();
-    buffer.push(item);
+// Trim buffer array to limit, fro the left. Mutates and returns buffer.
+var trimLeft = function trimLeft(buffer, limit) {
+  if (buffer.length > limit) {
+    buffer.splice(0, buffer.length - limit);
   }
   return buffer;
 };
 
-var advanceThresholdBuffer = function advanceThresholdBuffer(buffer, item, limit, threshold, read) {
-  var score = read(item);
-  return score > threshold ? advanceBuffer(buffer, item, limit) : buffer;
-};
-
-// Append n items to end of buffer, removing items from beginning of buffer
-// to stay under limit.
-var appendThresholdBuffer = function appendThresholdBuffer(buffer, items, limit, threshold, read) {
-  var length = items.length;
-  for (var i = 0; i < length; i++) {
-    advanceThresholdBuffer(buffer, items[i], limit, threshold, read);
-  }
+var trimSorted = function trimSorted(buffer, limit, readX) {
+  sortDesc(buffer, readX);
+  trimLeft(buffer, limit);
   return buffer;
 };
 
-var concatMonotonic = function concatMonotonic(buffer, items, limit, readX) {
-  // If the buffer is empty, take the fast path out.
+var concatSortedBuffer = function concatSortedBuffer(buffer, items, limit, readX) {
+  // If the buffer is empty, create a new items array, sort it. This is now
+  // the buffer.
   if (buffer.length === 0) {
-    return items.slice().sort(descending(readX));
-  } else if (items.length === 0) {
-    return buffer;
-  } else {
-    // Find the last largest timestamp.
-    var bufferHighScore = readX(last(buffer));
-    var sorted = items.slice().sort(descending(readX));
-    var itemsHighScore = readX(last(sorted));
-    if (itemsHighScore > bufferHighScore) {
-      var next = buffer.slice();
-      return appendThresholdBuffer(next, items, limit, bufferHighScore, readX);
-    } else {
+    return sortDesc(items.slice(), readX);
+  }
+  // If there are no items, return the buffer unchanged.
+  else if (items.length === 0) {
       return buffer;
     }
+    // If the most recent new item is still not newer than the most recent buffer
+    // item, don't append to buffer.
+    else if ((0, _d3Array.max)(items, readX) <= (0, _d3Array.max)(buffer, readX)) {
+        return buffer;
+      }
+      // Otherwise, add everything, then sort, then trim.
+      else {
+          return trimSorted(buffer.concat(items), limit, readX);
+        }
+};
+
+// Insert a datapoint somewhere into a sorted buffer.
+// Returns a new buffer array, sorted by readX desc.
+var insertSortedBuffer = function insertSortedBuffer(buffer, item, limit, readX) {
+  // If the buffer is empty, create a new items array, sort it. This is now
+  // the buffer.
+  if (buffer.length === 0) {
+    return [item];
+  } else {
+    return trimSorted(buffer.concat(item), limit, readX);
   }
 };
 
-// Check if an item comes after the last item in an array. "Comes after" is
-// defined by value returned from `readX`.
-var isMonotonic = function isMonotonic(array, item, readX) {
-  // If there is no last item in the array, then use 0 as the timestamp.
-  var timestamp = (0, _maybe.mapOr)(last(array), readX, 0);
-  return readX(item) > timestamp;
+// Sort items in descending order, in place
+// Returns mutated sorted array.
+var sortDesc = function sortDesc(array, read) {
+  return array.sort(descending(read));
 };
 
 // Create a comparator for sorting from a read function.
@@ -28601,12 +28639,6 @@ var descending = function descending(read) {
     var fb = read(b);
     return fa > fb ? 1 : fa < fb ? -1 : 0;
   };
-};
-
-var filterAbove = function filterAbove(array, value, read) {
-  return array.filter(function (item) {
-    return read(item) > value;
-  });
 };
 
 var last = function last(array) {
@@ -28620,7 +28652,58 @@ var isRecipeEnd = function isRecipeEnd(x) {
   return x.variable === RECIPE_END;
 };
 
-},{"../../openag-config.json":94,"../common/attr":98,"../common/cursor":102,"../common/draggable":104,"../common/indexed":107,"../common/lang":109,"../common/maybe":110,"../common/prelude":114,"../common/unknown":121,"../driver/virtual-dom":126,"../lang/find":135,"../lang/functional":136,"d3-array":6,"d3-scale":12,"d3-shape":13,"d3-time":15,"d3-time-format":14,"reflex":65}],129:[function(require,module,exports){
+// Read Date.now() in seconds.
+var secondsNow = function secondsNow() {
+  return Date.now() / 1000;
+};
+
+},{"../../openag-config.json":94,"../common/attr":98,"../common/cursor":102,"../common/draggable":104,"../common/indexed":107,"../common/lang":109,"../common/maybe":110,"../common/prelude":114,"../common/unknown":121,"../driver/virtual-dom":126,"../environment/datapoints":129,"../lang/find":136,"../lang/functional":137,"d3-array":6,"d3-scale":12,"d3-shape":13,"d3-time":15,"d3-time-format":14,"reflex":65}],129:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// We have 2 different kinds of datapoint classes so that instances are
+// monomorphic. This gives the JavaScript JIT an opportunity to do some
+// optimization, treating instances as structs in the backend.
+
+var StringPoint = function StringPoint(variable, is_desired, is_manual, timestamp, value) {
+  _classCallCheck(this, StringPoint);
+
+  this.variable = variable;
+  this.is_desired = is_desired;
+  this.is_manual = is_manual;
+  this.timestamp = timestamp;
+  this.value = value;
+};
+
+var NumberPoint = function NumberPoint(variable, is_desired, is_manual, timestamp, value) {
+  _classCallCheck(this, NumberPoint);
+
+  this.variable = variable;
+  this.is_desired = is_desired;
+  this.is_manual = is_manual;
+  this.timestamp = timestamp;
+  this.value = value;
+};
+
+var marker = exports.marker = function marker(timestamp, value) {
+  return new StringPoint('marker', false, true, timestamp, value);
+};
+
+var isMarker = exports.isMarker = function isMarker(dataPoint) {
+  return dataPoint.variable === 'marker';
+};
+
+// @TODO readDataPoint
+// reformat openag-config.json to have a hashmap and a weight field, instead
+// of being an array. Then only read datapoints that exist in the chart.
+// Only NumberDataPoints are supported for chart config in openag-config.json.
+
+},{}],130:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -28699,8 +28782,6 @@ var updateModal = (0, _cursor.cursor)({
 // View
 
 var view = exports.view = function view(model, address, environmentID) {
-  var variables = Config.chart.map(readVariable);
-
   return _reflex.html.div({
     className: 'modal',
     hidden: (0, _attr.toggle)(!model.isOpen, 'hidden')
@@ -28751,19 +28832,25 @@ var readVariable = function readVariable(d) {
   return d.variable;
 };
 
-},{"../../openag-config.json":94,"../common/attr":98,"../common/cursor":102,"../common/lang":109,"../common/modal":111,"../common/prelude":114,"../common/stache":119,"../common/unknown":121,"reflex":65}],130:[function(require,module,exports){
+},{"../../openag-config.json":94,"../common/attr":98,"../common/cursor":102,"../common/lang":109,"../common/modal":111,"../common/prelude":114,"../common/stache":119,"../common/unknown":121,"reflex":65}],131:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.view = exports.update = exports.init = exports.SetRecipe = exports.TagRecipe = exports.SetAirTemperature = undefined;
+exports.view = exports.update = exports.init = exports.TagMarkerButton = exports.SetRecipe = exports.TagRecipe = exports.SetAirTemperature = undefined;
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _reflex = require('reflex');
 
 var _prelude = require('../common/prelude');
+
+var _lang = require('../common/lang');
+
+var _button = require('../common/button');
+
+var Button = _interopRequireWildcard(_button);
 
 var _cursor = require('../common/cursor');
 
@@ -28800,6 +28887,13 @@ var TagRecipe = exports.TagRecipe = function TagRecipe(action) {
 // Set recipe on Recipe submodule.
 var SetRecipe = exports.SetRecipe = (0, _functional.compose)(TagRecipe, Recipe.SetRecipe);
 
+// Drop a marker (in the chart)
+var DropMarker = { type: 'DropMarker' };
+
+var TagMarkerButton = exports.TagMarkerButton = function TagMarkerButton(action) {
+  return action.type === 'Click' ? DropMarker : (0, _prelude.tagged)('MarkerButton', action);
+};
+
 // Model, init, update
 
 var init = exports.init = function init() {
@@ -28810,15 +28904,23 @@ var init = exports.init = function init() {
   var recipe = _Recipe$init2[0];
   var recipeFx = _Recipe$init2[1];
 
+  var _Button$init = Button.init((0, _lang.localize)('Drop Marker'), false, false, false, false);
+
+  var _Button$init2 = _slicedToArray(_Button$init, 2);
+
+  var markerButton = _Button$init2[0];
+  var markerButtonFx = _Button$init2[1];
+
 
   return [{
     recipe: recipe,
+    markerButton: markerButton,
     airTemperature: null
-  }, recipeFx.map(TagRecipe)];
+  }, _reflex.Effects.batch([recipeFx.map(TagRecipe), markerButtonFx.map(TagMarkerButton)])];
 };
 
 var update = exports.update = function update(model, action) {
-  return action.type === 'Recipe' ? updateRecipe(model, action.source) : action.type === 'SetAirTemperature' ? setAirTemperature(model, action.value) : (0, _unknown.update)(model, action);
+  return action.type === 'Recipe' ? updateRecipe(model, action.source) : action.type === 'MarkerButton' ? updateMarkerButton(model, action.source) : action.type === 'SetAirTemperature' ? setAirTemperature(model, action.value) : (0, _unknown.update)(model, action);
 };
 
 var updateRecipe = (0, _cursor.cursor)({
@@ -28832,6 +28934,17 @@ var updateRecipe = (0, _cursor.cursor)({
   tag: TagRecipe
 });
 
+var updateMarkerButton = (0, _cursor.cursor)({
+  get: function get(model) {
+    return model.markerButton;
+  },
+  set: function set(model, markerButton) {
+    return (0, _prelude.merge)(model, { markerButton: markerButton });
+  },
+  update: Button.update,
+  tag: TagMarkerButton
+});
+
 var setAirTemperature = function setAirTemperature(model, airTemperature) {
   return airTemperature != null ? [(0, _prelude.merge)(model, { airTemperature: airTemperature }), _reflex.Effects.none] : [model, _reflex.Effects.none];
 };
@@ -28843,7 +28956,13 @@ var view = exports.view = function view(model, address) {
     className: 'sidebar-summary'
   }, [_reflex.html.div({
     className: 'sidebar-summary--in'
-  }, [(0, _reflex.thunk)('sidebar-recipe', Recipe.view, model.recipe, (0, _reflex.forward)(address, TagRecipe)), viewAirTemperature(model.airTemperature)])]);
+  }, [_reflex.html.div({
+    className: 'sidebar-summary--unit'
+  }, [(0, _reflex.thunk)('sidebar-recipe', Recipe.view, model.recipe, (0, _reflex.forward)(address, TagRecipe))]), _reflex.html.div({
+    className: 'sidebar-summary--unit'
+  }, [(0, _reflex.thunk)('sidebar-air-temperature', viewAirTemperature, model.airTemperature)]), _reflex.html.div({
+    className: 'sidebar-summary--unit'
+  }, [(0, _reflex.thunk)('sidebar-marker-button', Button.view, model.markerButton, (0, _reflex.forward)(address, TagMarkerButton), 'btn-secondary btn-secondary--full-width')])])]);
 };
 
 var UNIT = '°';
@@ -28866,7 +28985,7 @@ var readTemperature = function readTemperature(value) {
   return Math.round(value) + '';
 };
 
-},{"../common/cursor":102,"../common/prelude":114,"../common/unknown":121,"../lang/functional":136,"./sidebar/recipe":131,"reflex":65}],131:[function(require,module,exports){
+},{"../common/button":100,"../common/cursor":102,"../common/lang":109,"../common/prelude":114,"../common/unknown":121,"../lang/functional":137,"./sidebar/recipe":132,"reflex":65}],132:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -28942,7 +29061,7 @@ var readName = function readName(model) {
   return model.name ? model.name : (0, _lang.localize)('None');
 };
 
-},{"../../common/lang":109,"../../common/prelude":114,"../../common/unknown":121,"reflex":65}],132:[function(require,module,exports){
+},{"../../common/lang":109,"../../common/prelude":114,"../../common/unknown":121,"reflex":65}],133:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -28980,7 +29099,7 @@ var view = exports.view = function view(model, address) {
   }, [(0, _lang.localize)('Export CSV')])])]);
 };
 
-},{"../common/lang":109,"../common/stache":119,"reflex":65}],133:[function(require,module,exports){
+},{"../common/lang":109,"../common/stache":119,"reflex":65}],134:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29114,7 +29233,7 @@ var readDoc = function readDoc(doc) {
   };
 };
 
-},{"../openag-config.json":94,"./common/database":103,"./common/prelude":114,"./common/stache":119,"./common/unknown":121,"pouchdb-browser":35,"reflex":65}],134:[function(require,module,exports){
+},{"../openag-config.json":94,"./common/database":103,"./common/prelude":114,"./common/stache":119,"./common/unknown":121,"pouchdb-browser":35,"reflex":65}],135:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29591,7 +29710,7 @@ var readOptionFromRecord = function readOptionFromRecord(_ref) {
   return (0, _option.assemble)(_id, _id, _id, false);
 };
 
-},{"../openag-config.json":94,"./common/attr":98,"./common/button":100,"./common/cursor":102,"./common/database":103,"./common/lang":109,"./common/modal":111,"./common/option":112,"./common/prelude":114,"./common/request":115,"./common/result":116,"./common/select":118,"./common/stache":119,"./common/unknown":121,"./common/url":122,"./common/validator":123,"./lang/functional":136,"pouchdb-browser":35,"reflex":65}],135:[function(require,module,exports){
+},{"../openag-config.json":94,"./common/attr":98,"./common/button":100,"./common/cursor":102,"./common/database":103,"./common/lang":109,"./common/modal":111,"./common/option":112,"./common/prelude":114,"./common/request":115,"./common/result":116,"./common/select":118,"./common/stache":119,"./common/unknown":121,"./common/url":122,"./common/validator":123,"./lang/functional":137,"pouchdb-browser":35,"reflex":65}],136:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29621,7 +29740,7 @@ var findRight = exports.findRight = function findRight(array, predicate) {
   }
 };
 
-},{}],136:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29691,7 +29810,7 @@ var constant = exports.constant = function constant(value) {
   };
 };
 
-},{}],137:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 'use strict';
 
 var _openagConfig = require('../openag-config.json');
@@ -29727,7 +29846,7 @@ var renderer = new _reflexVirtualDomDriver.Renderer({ target: document.body });
 application.view.subscribe(renderer.address);
 application.task.subscribe(_reflex.Effects.driver(application.address));
 
-},{"../openag-config.json":94,"./app":96,"./devtools":124,"reflex":65,"reflex-virtual-dom-driver":57}],138:[function(require,module,exports){
+},{"../openag-config.json":94,"./app":96,"./devtools":124,"reflex":65,"reflex-virtual-dom-driver":57}],139:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29911,7 +30030,7 @@ var updateMigrate = function updateMigrate(model, record) {
   return update(model, action);
 };
 
-},{"../openag-config.json":94,"../package.json":95,"./common/database":103,"./common/prelude.js":114,"./common/result":116,"./common/unknown":121,"pouchdb-browser":35,"reflex":65}],139:[function(require,module,exports){
+},{"../openag-config.json":94,"../package.json":95,"./common/database":103,"./common/prelude.js":114,"./common/result":116,"./common/unknown":121,"pouchdb-browser":35,"reflex":65}],140:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29959,7 +30078,7 @@ var view = exports.view = function view(model, address) {
   }, [String(model._id)]);
 };
 
-},{"./common/prelude":114,"./common/unknown":121,"reflex":65}],140:[function(require,module,exports){
+},{"./common/prelude":114,"./common/unknown":121,"reflex":65}],141:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30327,7 +30446,7 @@ var templateRecipesDatabase = function templateRecipesDatabase(origin) {
   });
 };
 
-},{"../openag-config.json":94,"./common/attr":98,"./common/banner":99,"./common/cursor":102,"./common/database":103,"./common/indexed":107,"./common/lang":109,"./common/modal":111,"./common/prelude":114,"./common/result":116,"./common/stache":119,"./common/unknown":121,"./lang/functional":136,"./recipe":139,"./recipes/form":141,"pouchdb-browser":35,"reflex":65}],141:[function(require,module,exports){
+},{"../openag-config.json":94,"./common/attr":98,"./common/banner":99,"./common/cursor":102,"./common/database":103,"./common/indexed":107,"./common/lang":109,"./common/modal":111,"./common/prelude":114,"./common/result":116,"./common/stache":119,"./common/unknown":121,"./lang/functional":137,"./recipe":140,"./recipes/form":142,"pouchdb-browser":35,"reflex":65}],142:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30516,4 +30635,4 @@ var view = exports.view = function view(model, address, isActive) {
   }, [(0, _reflex.thunk)('textarea', Input.viewTextarea, model.textarea, (0, _reflex.forward)(address, TextareaAction), 'rform-textarea', 'rform-textarea txt-textarea')])])])]);
 };
 
-},{"../common/attr":98,"../common/banner":99,"../common/cursor":102,"../common/input":108,"../common/lang":109,"../common/prelude":114,"../common/unknown":121,"../recipes":140,"reflex":65}]},{},[137]);
+},{"../common/attr":98,"../common/banner":99,"../common/cursor":102,"../common/input":108,"../common/lang":109,"../common/prelude":114,"../common/unknown":121,"../recipes":141,"reflex":65}]},{},[138]);
