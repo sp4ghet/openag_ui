@@ -29558,7 +29558,8 @@ var viewFTU = exports.viewFTU = function viewFTU(model, address) {
   }, [_reflex.html.div({
     className: 'panel--in'
   }, [_reflex.html.p({}, [(0, _lang.localize)("It's almost time to get planting! We just need a few details to get your Food Computer up and running.")]), (0, _reflex.thunk)('ftu-validator-name', Validator.view, model.name, (0, _reflex.forward)(address, TagName), 'ftu-validator'), (0, _reflex.thunk)('ftu-validator-address', Validator.view, model.address, (0, _reflex.forward)(address, TagAddress), 'ftu-validator'), _reflex.html.div({
-    className: 'labeled'
+    className: 'labeled',
+    hidden: (0, _attr.toggle)(model.environments.options.length < 2, 'hidden')
   }, [(0, _reflex.thunk)('ftu-select-environment', Select.view, model.environments, (0, _reflex.forward)(address, TagEnvironments), 'select ftu-select'), _reflex.html.label({
     className: 'labeled--label'
   }, [(0, _lang.localize)('Choose an environment')])]), _reflex.html.p({
