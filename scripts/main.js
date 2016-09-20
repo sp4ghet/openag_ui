@@ -30954,6 +30954,7 @@ var DashboardAction = function DashboardAction(action) {
 
 var ConfigureDashboard = (0, _functional.compose)(DashboardAction, Dashboard.Configure);
 var SetDashboardRecipe = (0, _functional.compose)(DashboardAction, Dashboard.SetRecipe);
+var decodeDashboardRecipe = (0, _functional.compose)(DashboardAction, Dashboard.decodeRecipe);
 var FinishDashboardLoading = DashboardAction(Dashboard.FinishLoading);
 var SetDashboardAirTemperature = (0, _functional.compose)(DashboardAction, Dashboard.SetAirTemperature);
 
@@ -31041,7 +31042,7 @@ var updateBacklog = Result.updater(function (model, record) {
   var recipeStart = (0, _datapoints.findRunningRecipe)(data);
   // If we found one, send it to dashboard so it can display timelapse video.
   if (recipeStart) {
-    actions.push(SetDashboardRecipe(recipeStart._id, readRecipeName(recipeStart)));
+    actions.push(decodeDashboardRecipe(recipeStart));
   }
   // If we didn't, let dashboard know it can stop showing the loading spinner.
   else {
@@ -31086,7 +31087,7 @@ var gotChangesOk = function gotChangesOk(model, record) {
   var recipeStart = (0, _datapoints.findRunningRecipe)(data);
   if (recipeStart) {
     // If we found one, send it to dashboard so it can display timelapse video.
-    actions.push(SetDashboardRecipe(recipeStart._id, readRecipeName(recipeStart)));
+    actions.push(decodeDashboardRecipe(recipeStart));
   }
   // If we didn't, let dashboard know it can stop showing the loading spinner.
   else {
@@ -31136,7 +31137,13 @@ var activateState = function activateState(model, id) {
 };
 
 var setRecipe = function setRecipe(model, id, name) {
-  return (0, _prelude.batch)(update, model, [SetChartRecipe(id, name), SetDashboardRecipe(id, name)]);
+  var hasTimelapseAttachment = false;
+
+  return (0, _prelude.batch)(update, model, [SetChartRecipe(id, name),
+  // This action comes "from above" when activating a recipe in the UI, before
+  // we get an http response. That means we don't yet have a timelapse
+  // attachment to show.
+  SetDashboardRecipe(id, name, hasTimelapseAttachment)]);
 };
 
 var updateChart = (0, _cursor.cursor)({
@@ -31176,10 +31183,6 @@ var view = exports.view = function view(model, address) {
 };
 
 // Helpers
-
-var readRecipeName = function readRecipeName(recipe) {
-  return recipe.name || recipe.value || recipe._id;
-};
 
 var readRow = function readRow(row) {
   return row.value;
@@ -32705,7 +32708,7 @@ var view = exports.view = function view(model, address) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.view = exports.update = exports.init = exports.SetAirTemperature = exports.TagSidebar = exports.Configure = exports.SetRecipe = exports.FinishLoading = undefined;
+exports.view = exports.update = exports.init = exports.SetAirTemperature = exports.TagSidebar = exports.Configure = exports.decodeRecipe = exports.SetRecipe = exports.FinishLoading = undefined;
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -32743,12 +32746,22 @@ var RequestOpenRecipes = {
 // will not be coming.
 var FinishLoading = exports.FinishLoading = { type: 'FinishLoading' };
 
-var SetRecipe = exports.SetRecipe = function SetRecipe(id, name) {
+var SetRecipe = exports.SetRecipe = function SetRecipe(id, name, hasTimelapse) {
   return {
     type: 'SetRecipe',
     id: id,
-    name: name
+    name: name,
+    hasTimelapse: hasTimelapse
   };
+};
+
+var hasTimelapseAttachment = function hasTimelapseAttachment(doc) {
+  return doc._attachments && doc._attachments.timelapse && doc._attachments.timelapse.content_type;
+};
+
+// Decode recipe document into SetRecipe action
+var decodeRecipe = exports.decodeRecipe = function decodeRecipe(doc) {
+  return SetRecipe(doc._id, doc.name || doc.value || doc._id, hasTimelapseAttachment(doc));
 };
 
 var Configure = exports.Configure = function Configure(origin) {
@@ -32774,7 +32787,7 @@ var SetAirTemperature = exports.SetAirTemperature = (0, _functional.compose)(Sid
 
 // Init and update
 
-var Model = function Model(origin, recipeStartID, isLoading, sidebar) {
+var Model = function Model(origin, recipeStartID, hasTimelapse, isLoading, sidebar) {
   _classCallCheck(this, Model);
 
   this.origin = origin;
@@ -32784,6 +32797,7 @@ var Model = function Model(origin, recipeStartID, isLoading, sidebar) {
   // 1. Loading (waiting for data to come back). Show a spinner.
   // 2. Loaded, but no recipe start exists.
   // 3. Loaded recipe start, but no video attached.
+  this.hasTimelapse = hasTimelapse;
   this.isLoading = isLoading;
   this.sidebar = sidebar;
 };
@@ -32796,15 +32810,17 @@ var init = exports.init = function init() {
   var sidebar = _Sidebar$init2[0];
   var sidebarFx = _Sidebar$init2[1];
 
+  var hasTimelapse = false;
+  var isLoading = true;
 
-  return [new Model(null, null, true, sidebar), _reflex.Effects.none];
+  return [new Model(null, null, hasTimelapse, isLoading, sidebar), _reflex.Effects.none];
 };
 
 var update = exports.update = function update(model, action) {
-  return action.type === 'Sidebar' ? delegateSidebarUpdate(model, action.source) : action.type === 'SetRecipe' ? setRecipe(model, action.id, action.name) : action.type === 'Configure' ? configure(model, action.origin) : action.type === 'FinishLoading' ? finishLoading(model) : (0, _unknown.update)(model, action);
+  return action.type === 'Sidebar' ? delegateSidebarUpdate(model, action.source) : action.type === 'SetRecipe' ? setRecipe(model, action.id, action.name, action.hasTimelapse) : action.type === 'Configure' ? configure(model, action.origin) : action.type === 'FinishLoading' ? finishLoading(model) : (0, _unknown.update)(model, action);
 };
 
-var setRecipe = function setRecipe(model, id, name) {
+var setRecipe = function setRecipe(model, id, name, hasTimelapse) {
   // Update sidebar model with id and name
   var _Sidebar$update = Sidebar.update(model.sidebar, Sidebar.SetRecipe(id, name));
 
@@ -32813,11 +32829,11 @@ var setRecipe = function setRecipe(model, id, name) {
   var sidebar = _Sidebar$update2[0];
   var sidebarFx = _Sidebar$update2[1];
 
-  // Create new model with id and new sidebar model
 
-  var next = new Model(model.origin, id,
-  // Set isLoading to false
-  false, sidebar);
+  var isLoading = false;
+
+  // Create new model with id and new sidebar model
+  var next = new Model(model.origin, id, hasTimelapse, isLoading, sidebar);
 
   // return next model and make sure to map sidebarFx.
   return [next, sidebarFx.map(TagSidebar)];
@@ -32825,12 +32841,14 @@ var setRecipe = function setRecipe(model, id, name) {
 
 // Configure origin url on model
 var configure = function configure(model, origin) {
-  return [new Model(origin, model.recipeStartID, model.isLoading, model.sidebar), _reflex.Effects.none];
+  return [new Model(origin, model.recipeStartID, model.hasTimelapse, model.isLoading, model.sidebar), _reflex.Effects.none];
 };
 
 // Flag initial loading state as finished.
 var finishLoading = function finishLoading(model) {
-  return [new Model(model.origin, model.recipeStartID, false, model.sidebar), _reflex.Effects.none];
+  return [new Model(model.origin, model.recipeStartID, model.hasTimelapse,
+  // Set loading to false.
+  false, model.sidebar), _reflex.Effects.none];
 };
 
 var swapSidebar = function swapSidebar(model, _ref) {
@@ -32838,7 +32856,7 @@ var swapSidebar = function swapSidebar(model, _ref) {
 
   var sidebar = _ref2[0];
   var fx = _ref2[1];
-  return [new Model(model.origin, model.recipeStartID, model.isLoading, sidebar), fx.map(TagSidebar)];
+  return [new Model(model.origin, model.recipeStartID, model.hasTimelapse, model.isLoading, sidebar), fx.map(TagSidebar)];
 };
 
 var delegateSidebarUpdate = function delegateSidebarUpdate(model, action) {
@@ -32848,7 +32866,7 @@ var delegateSidebarUpdate = function delegateSidebarUpdate(model, action) {
 // View
 
 var view = exports.view = function view(model, address) {
-  return model.isLoading ? viewLoading(model, address) : !isReady(model) ? viewEmpty(model, address) : viewReady(model, address);
+  return model.isLoading ? viewLoading(model, address) : !model.hasTimelapse ? viewEmpty(model, address) : viewReady(model, address);
 };
 
 var viewReady = function viewReady(model, address) {
@@ -32890,10 +32908,6 @@ var viewEmpty = function viewEmpty(model, address) {
 };
 
 // Utils
-
-var isReady = function isReady(model) {
-  return model.origin != null && model.recipeStartID != null;
-};
 
 var templateVideoUrl = function templateVideoUrl(model) {
   return (0, _stache.render)(_openagConfig.environmental_data_point.timelapse, {
