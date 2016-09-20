@@ -27416,6 +27416,7 @@ var TagBanner = (0, _prelude.tag)('Banner');
 var AlertBanner = (0, _functional.compose)(TagBanner, Banner.Alert);
 var AlertRefreshableBanner = (0, _functional.compose)(TagBanner, Banner.AlertRefreshable);
 var AlertDismissableBanner = (0, _functional.compose)(TagBanner, Banner.AlertDismissable);
+var NotifyBanner = (0, _functional.compose)(TagBanner, Banner.Notify);
 
 var StartRecipe = function StartRecipe(id, name) {
   return {
@@ -27619,9 +27620,9 @@ var postRecipe = function postRecipe(model, environmentID, recipeID) {
   return [model, Request.post(url, { recipe_id: recipeID }).map(RecipePosted)];
 };
 
-// We do nothing for successful recipe posts. This may change in future.
 var recipePostedOk = function recipePostedOk(model, value) {
-  return [model, _reflex.Effects.none];
+  var message = (0, _lang.localize)('Recipe Started!');
+  return update(model, NotifyBanner(message));
 };
 
 var recipePostedError = function recipePostedError(model, error) {
@@ -27860,13 +27861,11 @@ var toggle = exports.toggle = function toggle(isPresent, attrValue) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.view = exports.update = exports.init = exports.Model = exports.Suppress = exports.AlertRefreshable = exports.AlertDismissable = exports.Alert = undefined;
+exports.view = exports.update = exports.init = exports.Model = exports.Suppress = exports.AlertRefreshable = exports.AlertDismissable = exports.Alert = exports.Notify = undefined;
 
 var _reflex = require('reflex');
 
 var _lang = require('../common/lang');
-
-var Lang = _interopRequireWildcard(_lang);
 
 var _prelude = require('../common/prelude');
 
@@ -27878,12 +27877,28 @@ var Unknown = _interopRequireWildcard(_unknown);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; } /*
-                                                                                                                                                                                                                  An error banner for notifying the user of edge-case conditions.
-                                                                                                                                                                                                                  */
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /*
+                                                                                                                                                          An error banner for notifying the user of edge-case conditions.
+                                                                                                                                                          */
+
+
+// Default timeout for banner before it hides itself.
+// (only applies in some situations)
+var TIMEOUT = 8000;
 
 // Actions
+
+var isWarning = true;
+
+// Notify the user that something good/expected/benign happened.
+var Notify = exports.Notify = function Notify(message) {
+  return {
+    type: 'Notify',
+    message: message
+  };
+};
 
 // Turn on banner with message
 var Alert = exports.Alert = function Alert(message) {
@@ -27912,42 +27927,56 @@ var AlertRefreshable = exports.AlertRefreshable = function AlertRefreshable(mess
 // Turn off banner, clear message
 var Suppress = exports.Suppress = { type: 'Suppress' };
 
+var AlwaySuppress = function AlwaySuppress() {
+  return Suppress;
+};
+
 // Update, model, init
 var SHOW = 'show';
 var REFRESHABLE = 'refreshable';
 var DISMISSABLE = 'dismissable';
 var HIDE = 'hide';
 
-var Model = exports.Model = function Model(mode, message) {
-  return {
-    mode: mode,
-    message: message
-  };
-};
+var Model = exports.Model = function Model(mode, message, isWarning) {
+  _classCallCheck(this, Model);
 
-var swapShow = function swapShow(model, message) {
-  return model.mode !== SHOW || model.message !== message ? Model(SHOW, message) : model;
-};
-
-var swapRefreshable = function swapRefreshable(model, message) {
-  return model.mode !== REFRESHABLE || model.message !== message ? Model(REFRESHABLE, message) : model;
-};
-
-var swapDismissable = function swapDismissable(model, message) {
-  return model.mode !== DISMISSABLE || model.message !== message ? Model(DISMISSABLE, message) : model;
-};
-
-// Convenient update functions for model
-var swapSuppress = function swapSuppress(model) {
-  return model.mode !== HIDE ? Model(HIDE, '') : model;
+  this.mode = mode;
+  this.message = message;
+  this.isWarning = isWarning;
 };
 
 var init = exports.init = function init() {
-  return [Model(HIDE, ''), _reflex.Effects.none];
+  return [new Model(HIDE, '', isWarning), _reflex.Effects.none];
 };
 
 var update = exports.update = function update(model, action) {
-  return action.type === 'Alert' ? (0, _prelude.nofx)(swapShow(model, action.message)) : action.type === 'AlertRefreshable' ? (0, _prelude.nofx)(swapRefreshable(model, action.message)) : action.type === 'AlertDismissable' ? (0, _prelude.nofx)(swapDismissable(model, action.message)) : action.type === 'Suppress' ? (0, _prelude.nofx)(swapSuppress(model)) : Unknown.update(model, action);
+  return action.type === 'Alert' ? showAlert(model, action.message) : action.type === 'AlertRefreshable' ? alertRefreshable(model, action.message) : action.type === 'AlertDismissable' ? alertDismissable(model, action.message) : action.type === 'Notify' ? notify(model, action.message) : action.type === 'Suppress' ? suppress(model) : Unknown.update(model, action);
+};
+
+var showAlert = function showAlert(model, message) {
+  return [model.mode !== SHOW || model.message !== message ? new Model(SHOW, message, isWarning) : model,
+  // After the timeout, hide banner
+  _reflex.Effects.perform(_reflex.Task.sleep(TIMEOUT)).map(AlwaySuppress)];
+};
+
+var alertRefreshable = function alertRefreshable(model, message) {
+  return [model.mode !== REFRESHABLE || model.message !== message ? new Model(REFRESHABLE, message, isWarning) : model, _reflex.Effects.none];
+};
+
+var alertDismissable = function alertDismissable(model, message) {
+  return [model.mode !== DISMISSABLE || model.message !== message ? new Model(DISMISSABLE, message, isWarning) : model,
+  // After the timeout, hide banner
+  _reflex.Effects.perform(_reflex.Task.sleep(TIMEOUT)).map(AlwaySuppress)];
+};
+
+var notify = function notify(model, message) {
+  return [new Model(DISMISSABLE, message, !isWarning),
+  // After the timeout, hide banner
+  _reflex.Effects.perform(_reflex.Task.sleep(TIMEOUT)).map(AlwaySuppress)];
+};
+
+var suppress = function suppress(model) {
+  return [new Model(HIDE, model.message, model.isWarning), _reflex.Effects.none];
 };
 
 // View
@@ -27956,7 +27985,7 @@ var view = exports.view = function view(model, address, className) {
   return _reflex.html.div({
     className: (0, _attr.classed)(_defineProperty({
       'banner': true,
-      // Hide banner if there is no message to show
+      'banner--notification': !model.isWarning,
       'banner--close': model.mode === HIDE
     }, className, true))
   }, [_reflex.html.div({
@@ -27971,7 +28000,7 @@ var view = exports.view = function view(model, address, className) {
       event.preventDefault();
       address(Suppress);
     }
-  }, [Lang.localize('Close')]), _reflex.html.a({
+  }, [(0, _lang.localize)('Close')]), _reflex.html.a({
     className: (0, _attr.classed)({
       'banner-action': true,
       'banner-action--refresh': true,
@@ -27982,7 +28011,7 @@ var view = exports.view = function view(model, address, className) {
       // Refresh and flip boolean to bypass page cache.
       document.location.reload(true);
     }
-  }, [Lang.localize('Refresh')])]);
+  }, [(0, _lang.localize)('Refresh')])]);
 };
 
 },{"../common/attr":211,"../common/lang":222,"../common/prelude":226,"../common/unknown":233,"reflex":178}],213:[function(require,module,exports){
