@@ -27107,7 +27107,8 @@ module.exports={
     "origin_latest": "{{origin_url}}/environmental_data_point/_design/openag/_view/by_variable?group_level=3&startkey={{startkey}}&endkey={{endkey}}",
     "origin_range": "{{origin_url}}/environmental_data_point/_design/openag/_view/by_timestamp?startkey={{startkey}}&endkey={{endkey}}&limit={{limit}}&descending={{descending}}&stale=update_after",
     "origin_by_variable_csv": "{{origin_url}}/environmental_data_point/_design/openag/_list/csv/by_variable?group_level={{group_level}}&startkey={{startkey}}&endkey={{endkey}}&limit={{limit}}&descending={{descending}}&stale=update_after",
-    "timelapse": "{{origin_url}}/environmental_data_point/{{recipe_start_id}}/timelapse"
+    "timelapse": "{{origin_url}}/environmental_data_point/{{recipe_start_id}}/timelapse",
+    "changes": "{{origin_url}}/environmental_data_point/_changes?feed=longpoll&include_docs=true&heartbeat=true&since=now"
   },
 
   "recipes": {
@@ -27711,7 +27712,7 @@ var viewConfigured = function viewConfigured(model, address) {
   }, [(0, _reflex.thunk)('app-nav', AppNav.view, model.appNav, (0, _reflex.forward)(address, TagAppNav)), (0, _reflex.thunk)('banner', Banner.view, model.banner, (0, _reflex.forward)(address, TagBanner), 'global-banner'), (0, _reflex.thunk)('environment', Environment.view, model.environment, (0, _reflex.forward)(address, TagEnvironment)), (0, _reflex.thunk)('recipes', Recipes.view, model.recipes, (0, _reflex.forward)(address, TagRecipes))]);
 };
 
-},{"../openag-config.json":207,"../package.json":208,"./app/nav":210,"./common/banner":212,"./common/cursor":215,"./common/lang":222,"./common/prelude":227,"./common/request":228,"./common/stache":232,"./common/unknown":234,"./common/url":235,"./environment":240,"./environments":254,"./first-time-use":255,"./lang/functional":256,"./persistence":258,"./recipes":260,"reflex":178}],210:[function(require,module,exports){
+},{"../openag-config.json":207,"../package.json":208,"./app/nav":210,"./common/banner":212,"./common/cursor":215,"./common/lang":222,"./common/prelude":226,"./common/request":227,"./common/stache":231,"./common/unknown":233,"./common/url":234,"./environment":239,"./environments":253,"./first-time-use":254,"./lang/functional":255,"./persistence":257,"./recipes":259,"reflex":178}],210:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -27809,7 +27810,7 @@ var active = exports.active = function active(model) {
   return model.active;
 };
 
-},{"../common/attr":211,"../common/lang":222,"../common/prelude":227,"../common/unknown":234,"reflex":178}],211:[function(require,module,exports){
+},{"../common/attr":211,"../common/lang":222,"../common/prelude":226,"../common/unknown":233,"reflex":178}],211:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -27984,7 +27985,7 @@ var view = exports.view = function view(model, address, className) {
   }, [Lang.localize('Refresh')])]);
 };
 
-},{"../common/attr":211,"../common/lang":222,"../common/prelude":227,"../common/unknown":234,"reflex":178}],213:[function(require,module,exports){
+},{"../common/attr":211,"../common/lang":222,"../common/prelude":226,"../common/unknown":233,"reflex":178}],213:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28191,7 +28192,7 @@ var view = exports.view = function view(model, address, className) {
   }, [model.label]);
 };
 
-},{"../common/attr":211,"../common/control":214,"../common/focusable":219,"../common/prelude":227,"../common/target":233,"../common/unknown":234,"reflex":178}],214:[function(require,module,exports){
+},{"../common/attr":211,"../common/control":214,"../common/focusable":219,"../common/prelude":226,"../common/target":232,"../common/unknown":233,"reflex":178}],214:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28260,7 +28261,7 @@ var toggle = exports.toggle = function toggle(model) {
   return [model.isDisabled ? Model.enabled : Model.disabled, _reflex.Effects.none];
 };
 
-},{"../common/prelude":227,"../common/unknown":234,"reflex":178}],215:[function(require,module,exports){
+},{"../common/prelude":226,"../common/unknown":233,"reflex":178}],215:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28465,7 +28466,7 @@ var sync = exports.sync = function sync(db, replica) {
   }));
 };
 
-},{"../common/result":229,"../lang/functional":256,"reflex":178}],217:[function(require,module,exports){
+},{"../common/result":228,"../lang/functional":255,"reflex":178}],217:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -28541,7 +28542,7 @@ var drag = exports.drag = function drag(model, coords) {
   return update(model, Drag(coords));
 };
 
-},{"../common/unknown":234,"reflex":178}],218:[function(require,module,exports){
+},{"../common/unknown":233,"reflex":178}],218:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28655,7 +28656,7 @@ var readSelection = exports.readSelection = function readSelection(input) {
   return new Selection(input.selectionStart, input.selectionEnd, input.selectionDirection || 'none');
 };
 
-},{"../common/unknown":234,"reflex":178}],219:[function(require,module,exports){
+},{"../common/unknown":233,"reflex":178}],219:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28722,7 +28723,7 @@ var blur = exports.blur = function blur(model) {
 var onFocus = exports.onFocus = (0, _prelude.port)((0, _functional.constant)(Focus));
 var onBlur = exports.onBlur = (0, _prelude.port)((0, _functional.constant)(Blur));
 
-},{"../common/prelude":227,"../common/unknown":234,"../lang/functional":256,"reflex":178}],220:[function(require,module,exports){
+},{"../common/prelude":226,"../common/unknown":233,"../lang/functional":255,"reflex":178}],220:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -28929,7 +28930,7 @@ var updateWithID = exports.updateWithID = function updateWithID(update, tag, mod
   }
 };
 
-},{"../common/prelude":227,"../common/unknown":234,"../lang/functional":256,"reflex":178}],221:[function(require,module,exports){
+},{"../common/prelude":226,"../common/unknown":233,"../lang/functional":255,"reflex":178}],221:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29140,7 +29141,7 @@ var onSelect = exports.onSelect = (0, _prelude.annotate)(Edit.onSelect, EditActi
 var onFocus = exports.onFocus = (0, _prelude.annotate)(Focus.onFocus, FocusAction);
 var onBlur = exports.onBlur = (0, _prelude.annotate)(Focus.onBlur, FocusAction);
 
-},{"../common/control":214,"../common/editable":218,"../common/focusable":219,"../common/prelude":227,"../common/unknown":234,"../lang/functional":256,"reflex":178}],222:[function(require,module,exports){
+},{"../common/control":214,"../common/editable":218,"../common/focusable":219,"../common/prelude":226,"../common/unknown":233,"../lang/functional":255,"reflex":178}],222:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29160,7 +29161,7 @@ var localizeTemplate = exports.localizeTemplate = function localizeTemplate(text
   return (0, _stache.render)(text, context);
 };
 
-},{"../common/stache":232}],223:[function(require,module,exports){
+},{"../common/stache":231}],223:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29223,7 +29224,7 @@ var update = exports.update = function update(model, action) {
   return action.type === 'Open' ? [(0, _prelude.merge)(model, { isOpen: true }), _reflex.Effects.none] : action.type === 'Close' ? [(0, _prelude.merge)(model, { isOpen: false }), _reflex.Effects.none] : Unknown.update(model, action);
 };
 
-},{"../common/prelude":227,"../common/unknown":234,"reflex":178}],225:[function(require,module,exports){
+},{"../common/prelude":226,"../common/unknown":233,"reflex":178}],225:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29307,77 +29308,7 @@ var readValue = exports.readValue = function readValue(option) {
   return option.value;
 };
 
-},{"../common/attr":211,"../common/control":214,"../common/unknown":234,"reflex":178}],226:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.update = exports.init = exports.calcDelay = exports.schedule = exports.Miss = exports.Pong = exports.Ping = exports.Schedule = undefined;
-
-var _reflex = require('reflex');
-
-var _prelude = require('../common/prelude');
-
-var _functional = require('../lang/functional');
-
-var _unknown = require('../common/unknown');
-
-var Unknown = _interopRequireWildcard(_unknown);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-// Useful constants
-var seconds = 1000;
-var minutes = seconds * 60;
-var MAX_DELAY = 10 * minutes;
-
-// Actions and effects
-
-var Schedule = exports.Schedule = function Schedule(delay) {
-  return {
-    type: 'Schedule',
-    delay: delay
-  };
-};
-
-var Ping = exports.Ping = {
-  type: 'Ping'
-};
-
-var Pong = exports.Pong = {
-  type: 'Pong'
-};
-
-var Miss = exports.Miss = {
-  type: 'Miss'
-};
-
-// Send an action as an effect after a delay.
-var schedule = exports.schedule = function schedule(action, time) {
-  return _reflex.Effects.perform(_reflex.Task.sleep(time)).map((0, _functional.constant)(action));
-};
-
-var calcDelay = exports.calcDelay = function calcDelay(delay, misses) {
-  return Math.min(delay + delay * misses, MAX_DELAY);
-};
-
-var init = exports.init = function init(timeout) {
-  return [{
-    timeout: timeout,
-    misses: 0
-  }, _reflex.Effects.none];
-};
-
-var update = exports.update = function update(model, action) {
-  return action.type === 'Schedule' ? [model, schedule(Ping, action.delay)] : action.type === 'Miss' ? [(0, _prelude.merge)(model, {
-    misses: model.misses + 1
-  }), _reflex.Effects.receive(Schedule(calcDelay(model.timeout, model.misses)))] : action.type === 'Pong' ? [(0, _prelude.merge)(model, {
-    misses: 0
-  }), _reflex.Effects.receive(Schedule(calcDelay(model.timeout, model.misses)))] : action.type === 'Ping' ? [model, _reflex.Effects.none] : Unknown.update(model, action);
-};
-
-},{"../common/prelude":227,"../common/unknown":234,"../lang/functional":256,"reflex":178}],227:[function(require,module,exports){
+},{"../common/attr":211,"../common/control":214,"../common/unknown":233,"reflex":178}],226:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29497,7 +29428,7 @@ var annotate = exports.annotate = function annotate(port, tag) {
   };
 };
 
-},{"reflex":178}],228:[function(require,module,exports){
+},{"reflex":178}],227:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29610,7 +29541,7 @@ var post = exports.post = function post(url, body) {
   }));
 };
 
-},{"../common/lang":222,"../common/prelude":227,"../common/result":229,"../lang/functional":256,"reflex":178,"whatwg-fetch":205}],229:[function(require,module,exports){
+},{"../common/lang":222,"../common/prelude":226,"../common/result":228,"../lang/functional":255,"reflex":178,"whatwg-fetch":205}],228:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29658,7 +29589,7 @@ var updater = exports.updater = function updater(ok, error) {
   };
 };
 
-},{}],230:[function(require,module,exports){
+},{}],229:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29683,7 +29614,7 @@ var Env = function Env() {
 
 var env = exports.env = Env();
 
-},{"querystring":166}],231:[function(require,module,exports){
+},{"querystring":166}],230:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29817,7 +29748,7 @@ var readValue = exports.readValue = function readValue(model) {
   return model.value;
 };
 
-},{"../common/attr":211,"../common/option":225,"../common/prelude":227,"../common/unknown":234,"reflex":178}],232:[function(require,module,exports){
+},{"../common/attr":211,"../common/option":225,"../common/prelude":226,"../common/unknown":233,"reflex":178}],231:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29850,7 +29781,7 @@ var render = exports.render = function render(string, context) {
   });
 };
 
-},{}],233:[function(require,module,exports){
+},{}],232:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29917,7 +29848,7 @@ var out = exports.out = function out(model) {
 var onMouseOver = exports.onMouseOver = (0, _prelude.port)((0, _functional.constant)(Over));
 var onMouseOut = exports.onMouseOut = (0, _prelude.port)((0, _functional.constant)(Out));
 
-},{"../common/prelude":227,"../common/unknown":234,"../lang/functional":256,"reflex":178}],234:[function(require,module,exports){
+},{"../common/prelude":226,"../common/unknown":233,"../lang/functional":255,"reflex":178}],233:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29981,7 +29912,7 @@ exports.update = function update(model /*:model*/, action /*:action*/) /*:[model
   return [model, _reflex.Effects.none];
 };
 
-},{"reflex":178}],235:[function(require,module,exports){
+},{"reflex":178}],234:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30029,7 +29960,7 @@ var readRootUrl = exports.readRootUrl = function readRootUrl(string) {
   return rootUrl;
 };
 
-},{}],236:[function(require,module,exports){
+},{}],235:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30348,7 +30279,7 @@ var readValue = exports.readValue = function readValue(model) {
   return model.edit.value;
 };
 
-},{"../common/attr":211,"../common/control":214,"../common/editable":218,"../common/focusable":219,"../common/prelude":227,"../common/unknown":234,"../lang/functional":256,"reflex":178}],237:[function(require,module,exports){
+},{"../common/attr":211,"../common/control":214,"../common/editable":218,"../common/focusable":219,"../common/prelude":226,"../common/unknown":233,"../lang/functional":255,"reflex":178}],236:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30475,7 +30406,7 @@ var view = exports.view = function view(model, address) {
   return model.Debuggee.view(model.debuggee, (0, _reflex.forward)(address, TagDebuggee));
 };
 
-},{"./common/cursor":215,"./common/prelude":227,"./common/runtime":230,"./common/unknown":234,"./devtools/log":238,"reflex":178}],238:[function(require,module,exports){
+},{"./common/cursor":215,"./common/prelude":226,"./common/runtime":229,"./common/unknown":233,"./devtools/log":237,"reflex":178}],237:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30524,7 +30455,7 @@ var log = function log(model, action) {
   return [model, _reflex.Effects.none];
 };
 
-},{"../common/unknown":234,"reflex":178}],239:[function(require,module,exports){
+},{"../common/unknown":233,"reflex":178}],238:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30863,7 +30794,7 @@ var forceReplace = exports.forceReplace = function forceReplace(query, element) 
   });
 };
 
-},{"reflex":178,"reflex-virtual-dom-driver":170}],240:[function(require,module,exports){
+},{"reflex":178,"reflex-virtual-dom-driver":170}],239:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30882,10 +30813,6 @@ var _reflex = require('reflex');
 var _prelude = require('./common/prelude');
 
 var _attr = require('./common/attr');
-
-var _poll = require('./common/poll');
-
-var Poll = _interopRequireWildcard(_poll);
 
 var _stache = require('./common/stache');
 
@@ -30928,7 +30855,6 @@ var S_MS = 1000;
 var MIN_MS = S_MS * 60;
 var HR_MS = MIN_MS * 60;
 var DAY_MS = HR_MS * 24;
-var POLL_TIMEOUT = 4 * S_MS;
 var RETRY_TIMEOUT = 4 * S_MS;
 
 // Limit to the number of datapoints that will be rendered in chart.
@@ -30999,18 +30925,14 @@ var DashboardAction = function DashboardAction(action) {
 
 var ConfigureDashboard = (0, _functional.compose)(DashboardAction, Dashboard.Configure);
 var SetDashboardRecipe = (0, _functional.compose)(DashboardAction, Dashboard.SetRecipe);
+var FinishDashboardLoading = DashboardAction(Dashboard.FinishLoading);
 var SetDashboardAirTemperature = (0, _functional.compose)(DashboardAction, Dashboard.SetAirTemperature);
 
-var TagPoll = function TagPoll(action) {
-  return action.type === 'Ping' ? FetchLatest : (0, _prelude.tagged)('Poll', action);
-};
+var GetChanges = { type: 'GetChanges' };
 
-var FetchLatest = { type: 'FetchLatest' };
-
-// The result of fetching latest.
-var Latest = function Latest(result) {
+var GotChanges = function GotChanges(result) {
   return {
-    type: 'Latest',
+    type: 'GotChanges',
     result: result
   };
 };
@@ -31026,22 +30948,12 @@ var GotBacklog = function GotBacklog(result) {
   };
 };
 
-var PongPoll = TagPoll(Poll.Pong);
-var MissPoll = TagPoll(Poll.Miss);
-
 // Send an alert. We use this to send up problems to be displayed in banner.
 var AlertBanner = (0, _prelude.tag)('AlertBanner');
 
 // Model init and update
 
 var init = exports.init = function init(id, state) {
-  var _Poll$init = Poll.init(POLL_TIMEOUT);
-
-  var _Poll$init2 = _slicedToArray(_Poll$init, 2);
-
-  var poll = _Poll$init2[0];
-  var pollFx = _Poll$init2[1];
-
   var _Dashboard$init = Dashboard.init();
 
   var _Dashboard$init2 = _slicedToArray(_Dashboard$init, 2);
@@ -31062,9 +30974,8 @@ var init = exports.init = function init(id, state) {
     name: null,
     state: state,
     chart: chart,
-    dashboard: dashboard,
-    poll: poll
-  }, _reflex.Effects.batch([chartFx.map(TagChart), dashboardFx.map(TagDashboard), pollFx.map(TagPoll)])];
+    dashboard: dashboard
+  }, _reflex.Effects.batch([chartFx.map(TagChart), dashboardFx.map(TagDashboard)])];
 };
 
 // Serialize environment for storing locally.
@@ -31076,59 +30987,8 @@ var serialize = exports.serialize = function serialize(model) {
 };
 
 var update = exports.update = function update(model, action) {
-  return action.type === 'NoOp' ? [model, _reflex.Effects.none] : action.type === 'Poll' ? updatePoll(model, action.source) : action.type === 'Chart' ? updateChart(model, action.source) : action.type === 'Dashboard' ? updateDashboard(model, action.source) : action.type === 'SetRecipe' ? setRecipe(model, action.id, action.name) : action.type === 'FetchLatest' ? fetchLatest(model) : action.type === 'Latest' ? updateLatest(model, action.result) : action.type === 'GetBacklog' ? getBacklog(model) : action.type === 'GotBacklog' ? updateBacklog(model, action.result) : action.type === 'ActivateState' ? activateState(model, action.id) : action.type === 'Configure' ? configure(model, action) : Unknown.update(model, action);
+  return action.type === 'NoOp' ? [model, _reflex.Effects.none] : action.type === 'Chart' ? updateChart(model, action.source) : action.type === 'Dashboard' ? updateDashboard(model, action.source) : action.type === 'GetChanges' ? getChanges(model) : action.type === 'GotChanges' ? action.result.isOk ? gotChangesOk(model, action.result.value) : gotChangesError(model, action.result.error) : action.type === 'SetRecipe' ? setRecipe(model, action.id, action.name) : action.type === 'GetBacklog' ? getBacklog(model) : action.type === 'GotBacklog' ? updateBacklog(model, action.result) : action.type === 'ActivateState' ? activateState(model, action.id) : action.type === 'Configure' ? configure(model, action) : Unknown.update(model, action);
 };
-
-var fetchLatest = function fetchLatest(model) {
-  if (model.origin && model.id) {
-    var url = templateLatestUrl(model.origin, model.id);
-    return [model, Request.get(url).map(Latest)];
-  } else {
-    console.warn('fetchLatest was called before origin and ID were restored on model');
-    return [model, _reflex.Effects.none];
-  }
-};
-
-var updateLatest = Result.updater(function (model, record) {
-  var data = readData(record);
-
-  var actions = [
-  // This will also automatically handle setting any new RecipeStart
-  AddChartData(data)];
-
-  // Find the most recent recipe start.
-  var recipeStart = (0, _datapoints.findRunningRecipe)(data);
-  if (recipeStart) {
-    // If we found one, send it to dashboard so it can display timelapse video.
-    actions.push(SetDashboardRecipe(recipeStart._id, readRecipeName(recipeStart)));
-  }
-
-  // find air temperature
-  var airTemperature = (0, _datapoints.findAirTemperature)(data);
-  if (airTemperature) {
-    actions.push(SetDashboardAirTemperature(airTemperature));
-  }
-
-  actions.push(PongPoll);
-
-  return (0, _prelude.batch)(update, model, actions);
-}, function (model, error) {
-  // Send miss poll
-  var _update = update(model, MissPoll);
-
-  var _update2 = _slicedToArray(_update, 2);
-
-  var next = _update2[0];
-  var fx = _update2[1];
-
-  // Create alert action
-
-  var action = AlertBanner(error);
-
-  return [next,
-  // Batch any effect generated by MissPoll with the alert effect.
-  _reflex.Effects.batch([fx, _reflex.Effects.receive(action)])];
-});
 
 var getBacklog = function getBacklog(model) {
   if (model.origin && model.id) {
@@ -31145,6 +31005,51 @@ var updateBacklog = Result.updater(function (model, record) {
   var data = readData(record);
 
   var actions = [
+  // This will also automatically handle setting any new RecipeStart
+  AddChartData(data)];
+
+  // Find the most recent recipe start.
+  var recipeStart = (0, _datapoints.findRunningRecipe)(data);
+  // If we found one, send it to dashboard so it can display timelapse video.
+  if (recipeStart) {
+    actions.push(SetDashboardRecipe(recipeStart._id, readRecipeName(recipeStart)));
+  }
+  // If we didn't, let dashboard know it can stop showing the loading spinner.
+  else {
+      actions.push(FinishDashboardLoading);
+    }
+
+  // find air temperature
+  var airTemperature = (0, _datapoints.findAirTemperature)(data);
+  if (airTemperature) {
+    actions.push(SetDashboardAirTemperature(airTemperature));
+  }
+
+  actions.push(GetChanges);
+
+  return (0, _prelude.batch)(update, model, actions);
+}, function (model, error) {
+  var action = AlertBanner(error);
+
+  return [model, _reflex.Effects.batch([
+  // Wait for a bit, then try to get backlog again.
+  _reflex.Effects.perform(_reflex.Task.sleep(RETRY_TIMEOUT)).map((0, _functional.constant)(GetBacklog)), _reflex.Effects.receive(action)])];
+});
+
+var getChanges = function getChanges(model) {
+  if (model.changesUrl) {
+    return [model, Request.get(model.changesUrl).map(GotChanges)];
+  } else {
+    // This case should never happen. Handle it anyway and warn developer.
+    console.warn('GetChanges was sent before changesUrl was configured on environment model. This should never happen.');
+    return [model, _reflex.Effects.none];
+  }
+};
+
+var gotChangesOk = function gotChangesOk(model, record) {
+  var data = readChanges(record);
+
+  var actions = [
   // This will also handle adding any recipe start
   AddChartData(data)];
 
@@ -31154,6 +31059,10 @@ var updateBacklog = Result.updater(function (model, record) {
     // If we found one, send it to dashboard so it can display timelapse video.
     actions.push(SetDashboardRecipe(recipeStart._id, readRecipeName(recipeStart)));
   }
+  // If we didn't, let dashboard know it can stop showing the loading spinner.
+  else {
+      actions.push(FinishDashboardLoading);
+    }
 
   // find air temperature
   var airTemperature = (0, _datapoints.findAirTemperature)(data);
@@ -31161,16 +31070,17 @@ var updateBacklog = Result.updater(function (model, record) {
     actions.push(SetDashboardAirTemperature(airTemperature));
   }
 
-  actions.push(FetchLatest);
+  actions.push(GetChanges);
 
   return (0, _prelude.batch)(update, model, actions);
-}, function (model, error) {
+};
+
+var gotChangesError = function gotChangesError(model, error) {
+  // Create alert action
   var action = AlertBanner(error);
 
-  return [model, _reflex.Effects.batch([
-  // Wait for a second, then try to get backlog again.
-  _reflex.Effects.perform(_reflex.Task.sleep(RETRY_TIMEOUT)).map((0, _functional.constant)(GetBacklog)), _reflex.Effects.receive(action)])];
-});
+  return [model, _reflex.Effects.receive(action)];
+};
 
 var configure = function configure(model, _ref) {
   var origin = _ref.origin;
@@ -31180,7 +31090,9 @@ var configure = function configure(model, _ref) {
   var next = (0, _prelude.merge)(model, {
     origin: origin,
     id: id,
-    name: name
+    name: name,
+    // Template and save changes URL for future use.
+    changesUrl: templateChangesUrl(origin)
   });
 
   return (0, _prelude.batch)(update, next, [
@@ -31197,17 +31109,6 @@ var activateState = function activateState(model, id) {
 var setRecipe = function setRecipe(model, id, name) {
   return (0, _prelude.batch)(update, model, [SetChartRecipe(id, name), SetDashboardRecipe(id, name)]);
 };
-
-var updatePoll = (0, _cursor.cursor)({
-  get: function get(model) {
-    return model.poll;
-  },
-  set: function set(model, poll) {
-    return (0, _prelude.merge)(model, { poll: poll });
-  },
-  update: Poll.update,
-  tag: TagPoll
-});
 
 var updateChart = (0, _cursor.cursor)({
   get: function get(model) {
@@ -31248,7 +31149,7 @@ var view = exports.view = function view(model, address) {
 // Helpers
 
 var readRecipeName = function readRecipeName(recipe) {
-  return recipe.name ? recipe.name : recipe.value;
+  return recipe.name || recipe.value || recipe._id;
 };
 
 var readRow = function readRow(row) {
@@ -31260,14 +31161,48 @@ var readRecord = function readRecord(record) {
   return record.rows.map(readRow);
 };
 
-var compareByTimestamp = function compareByTimestamp(a, b) {
-  return a.timestamp > b.timestamp ? 1 : -1;
-};
-
 var readData = function readData(record) {
   var data = readRecord(record);
   data.sort(compareByTimestamp);
   return data;
+};
+
+var compareByTimestamp = function compareByTimestamp(a, b) {
+  return a.timestamp > b.timestamp ? 1 : -1;
+};
+
+// `_changes` API responses are shaped like:
+//
+//     {
+//       "results": [
+//         {
+//           "seq":3,
+//           "id":"1471638075.99-36421882",
+//           "changes":[
+//             {"rev":"1-3ecb9485ad6906af287e040bd2fb9a2a"}
+//           ],
+//           "doc":{
+//             "_id":"1471638075.99-36421882",
+//             "_rev":"1-3ecb9485ad6906af287e040bd2fb9a2a",
+//             "timestamp":1471638075.9857180119,
+//             "value":0.045910000801086425781,
+//             "environment":"environment_1",
+//             "is_manual":false,
+//             "variable":"water_electrical_conductivity",
+//             "is_desired":false
+//           }
+//         },
+//         ...
+//       ]
+//     }
+//
+var readChanges = function readChanges(record) {
+  return record.results.map(readDoc);
+};
+
+// Read doc from results row.
+var readDoc = function readDoc(result) {
+  return result.doc;
 };
 
 // Create a url string that allows you to GET latest environmental datapoints
@@ -31290,7 +31225,13 @@ var templateRecentUrl = function templateRecentUrl(origin, id) {
   });
 };
 
-},{"../openag-config.json":207,"./common/attr":211,"./common/cursor":215,"./common/poll":226,"./common/prelude":227,"./common/request":228,"./common/result":229,"./common/stache":232,"./common/unknown":234,"./environment/chart":241,"./environment/dashboard":247,"./environment/datapoints":249,"./lang/functional":256,"reflex":178}],241:[function(require,module,exports){
+var templateChangesUrl = function templateChangesUrl(origin) {
+  return Template.render(Config.environmental_data_point.changes, {
+    origin_url: origin
+  });
+};
+
+},{"../openag-config.json":207,"./common/attr":211,"./common/cursor":215,"./common/prelude":226,"./common/request":227,"./common/result":228,"./common/stache":231,"./common/unknown":233,"./environment/chart":240,"./environment/dashboard":246,"./environment/datapoints":248,"./lang/functional":255,"reflex":178}],240:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31494,7 +31435,7 @@ var readRecipeName = function readRecipeName(recipe) {
   return recipe.name ? recipe.name : recipe.value;
 };
 
-},{"../common/cursor":215,"../common/prelude":227,"../common/unknown":234,"../environment/exporter":250,"../environment/toolbox":253,"../lang/functional":256,"./chart/chart":242,"./chart/sidebar":246,"./datapoints":249,"reflex":178}],242:[function(require,module,exports){
+},{"../common/cursor":215,"../common/prelude":226,"../common/unknown":233,"../environment/exporter":249,"../environment/toolbox":252,"../lang/functional":255,"./chart/chart":241,"./chart/sidebar":245,"./datapoints":248,"reflex":178}],241:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32177,7 +32118,7 @@ var secondsNow = function secondsNow() {
   return Date.now() / 1000;
 };
 
-},{"../../../openag-config.json":207,"../../common/attr":211,"../../common/cursor":215,"../../common/draggable":217,"../../common/indexed":220,"../../common/lang":222,"../../common/maybe":223,"../../common/prelude":227,"../../common/unknown":234,"../../driver/virtual-dom":239,"../../lang/functional":256,"../datapoints":249,"./fixed-buffer":243,"./line-group":244,"./series":245,"d3-array":6,"d3-scale":12,"d3-shape":13,"d3-time":15,"d3-time-format":14,"reflex":178}],243:[function(require,module,exports){
+},{"../../../openag-config.json":207,"../../common/attr":211,"../../common/cursor":215,"../../common/draggable":217,"../../common/indexed":220,"../../common/lang":222,"../../common/maybe":223,"../../common/prelude":226,"../../common/unknown":233,"../../driver/virtual-dom":238,"../../lang/functional":255,"../datapoints":248,"./fixed-buffer":242,"./line-group":243,"./series":244,"d3-array":6,"d3-scale":12,"d3-shape":13,"d3-time":15,"d3-time-format":14,"reflex":178}],242:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32279,7 +32220,7 @@ var trimMut = function trimMut(buffer, limit) {
   return buffer;
 };
 
-},{}],244:[function(require,module,exports){
+},{}],243:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32374,7 +32315,7 @@ LineGroup.calcLength = function (group) {
   return _fixedBuffer.FixedBuffer.values(group.measured).length + _fixedBuffer.FixedBuffer.values(group.desired).length;
 };
 
-},{"../datapoints":249,"./fixed-buffer":243,"lodash/last":131}],245:[function(require,module,exports){
+},{"../datapoints":248,"./fixed-buffer":242,"lodash/last":131}],244:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32577,7 +32518,7 @@ var readConfigVariable = function readConfigVariable(config) {
   return config.variable;
 };
 
-},{"../../common/maybe":223,"./fixed-buffer":243,"./line-group":244,"lodash/last":131,"lodash/zipObject":138}],246:[function(require,module,exports){
+},{"../../common/maybe":223,"./fixed-buffer":242,"./line-group":243,"lodash/last":131,"lodash/zipObject":138}],245:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32729,13 +32670,13 @@ var view = exports.view = function view(model, address) {
   }, [(0, _reflex.thunk)('sidebar-marker-button', Button.view, model.markerButton, (0, _reflex.forward)(address, TagMarkerButton), 'btn-secondary btn-secondary--full-width')])])]);
 };
 
-},{"../../common/button":213,"../../common/cursor":215,"../../common/lang":222,"../../common/prelude":227,"../../common/unknown":234,"../../lang/functional":256,"../sidebar/air-temperature":251,"../sidebar/recipe":252,"reflex":178}],247:[function(require,module,exports){
+},{"../../common/button":213,"../../common/cursor":215,"../../common/lang":222,"../../common/prelude":226,"../../common/unknown":233,"../../lang/functional":255,"../sidebar/air-temperature":250,"../sidebar/recipe":251,"reflex":178}],246:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.viewUnready = exports.viewReady = exports.view = exports.update = exports.init = exports.SetAirTemperature = exports.TagSidebar = exports.Configure = exports.SetRecipe = undefined;
+exports.view = exports.update = exports.init = exports.SetAirTemperature = exports.TagSidebar = exports.Configure = exports.SetRecipe = exports.FinishLoading = undefined;
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -32749,6 +32690,8 @@ var _stache = require('../common/stache');
 
 var _unknown = require('../common/unknown');
 
+var _lang = require('../common/lang');
+
 var _sidebar = require('./dashboard/sidebar');
 
 var Sidebar = _interopRequireWildcard(_sidebar);
@@ -32760,13 +32703,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                                                                                                                                                           */
 
 
-var TIMELAPSE_TEMPLATE = _openagConfig.environmental_data_point.timelapse;
-
 // Actions
 
 var RequestOpenRecipes = {
   type: 'RequestOpenRecipes'
 };
+
+// Signal that the component has finished loading.
+// This can be used by the parent component to tell the dashboard that an update
+// will not be coming.
+var FinishLoading = exports.FinishLoading = { type: 'FinishLoading' };
 
 var SetRecipe = exports.SetRecipe = function SetRecipe(id, name) {
   return {
@@ -32799,11 +32745,17 @@ var SetAirTemperature = exports.SetAirTemperature = (0, _functional.compose)(Sid
 
 // Init and update
 
-var Model = function Model(origin, recipeStartID, sidebar) {
+var Model = function Model(origin, recipeStartID, isLoading, sidebar) {
   _classCallCheck(this, Model);
 
   this.origin = origin;
   this.recipeStartID = recipeStartID;
+  // We have to deal with 3 states:
+  //
+  // 1. Loading (waiting for data to come back). Show a spinner.
+  // 2. Loaded, but no recipe start exists.
+  // 3. Loaded recipe start, but no video attached.
+  this.isLoading = isLoading;
   this.sidebar = sidebar;
 };
 
@@ -32816,11 +32768,11 @@ var init = exports.init = function init() {
   var sidebarFx = _Sidebar$init2[1];
 
 
-  return [new Model(null, null, sidebar), _reflex.Effects.none];
+  return [new Model(null, null, true, sidebar), _reflex.Effects.none];
 };
 
 var update = exports.update = function update(model, action) {
-  return action.type === 'Sidebar' ? delegateSidebarUpdate(model, action.source) : action.type === 'SetRecipe' ? setRecipe(model, action.id, action.name) : action.type === 'Configure' ? configure(model, action.origin) : (0, _unknown.update)(model, action);
+  return action.type === 'Sidebar' ? delegateSidebarUpdate(model, action.source) : action.type === 'SetRecipe' ? setRecipe(model, action.id, action.name) : action.type === 'Configure' ? configure(model, action.origin) : action.type === 'FinishLoading' ? finishLoading(model) : (0, _unknown.update)(model, action);
 };
 
 var setRecipe = function setRecipe(model, id, name) {
@@ -32834,14 +32786,22 @@ var setRecipe = function setRecipe(model, id, name) {
 
   // Create new model with id and new sidebar model
 
-  var next = new Model(model.origin, id, sidebar);
+  var next = new Model(model.origin, id,
+  // Set isLoading to false
+  false, sidebar);
 
   // return next model and make sure to map sidebarFx.
   return [next, sidebarFx.map(TagSidebar)];
 };
 
+// Configure origin url on model
 var configure = function configure(model, origin) {
-  return [new Model(origin, model.recipeStartID, model.sidebar), _reflex.Effects.none];
+  return [new Model(origin, model.recipeStartID, model.isLoading, model.sidebar), _reflex.Effects.none];
+};
+
+// Flag initial loading state as finished.
+var finishLoading = function finishLoading(model) {
+  return [new Model(model.origin, model.recipeStartID, false, model.sidebar), _reflex.Effects.none];
 };
 
 var swapSidebar = function swapSidebar(model, _ref) {
@@ -32849,7 +32809,7 @@ var swapSidebar = function swapSidebar(model, _ref) {
 
   var sidebar = _ref2[0];
   var fx = _ref2[1];
-  return [new Model(model.origin, model.recipeStartID, sidebar), fx.map(TagSidebar)];
+  return [new Model(model.origin, model.recipeStartID, model.isLoading, sidebar), fx.map(TagSidebar)];
 };
 
 var delegateSidebarUpdate = function delegateSidebarUpdate(model, action) {
@@ -32859,10 +32819,10 @@ var delegateSidebarUpdate = function delegateSidebarUpdate(model, action) {
 // View
 
 var view = exports.view = function view(model, address) {
-  return isReady(model) ? viewReady(model, address) : viewUnready(model, address);
+  return model.isLoading ? viewLoading(model, address) : !isReady(model) ? viewEmpty(model, address) : viewReady(model, address);
 };
 
-var viewReady = exports.viewReady = function viewReady(model, address) {
+var viewReady = function viewReady(model, address) {
   return _reflex.html.div({
     className: 'dashboard-view split-view'
   }, [(0, _reflex.thunk)('dashboard-sidebar', Sidebar.view, model.sidebar, (0, _reflex.forward)(address, TagSidebar)), _reflex.html.div({
@@ -32879,12 +32839,25 @@ var viewReady = exports.viewReady = function viewReady(model, address) {
   })])])]);
 };
 
-var viewUnready = exports.viewUnready = function viewUnready(model, address) {
+var viewLoading = function viewLoading(model, address) {
   return _reflex.html.div({
     className: 'dashboard-view split-view'
   }, [(0, _reflex.thunk)('dashboard-sidebar', Sidebar.view, model.sidebar, (0, _reflex.forward)(address, TagSidebar)), _reflex.html.div({
     className: 'dashboard-content split-view-content split-view-content--loading'
   }, [])]);
+};
+
+var viewEmpty = function viewEmpty(model, address) {
+  return _reflex.html.div({
+    className: 'dashboard-view split-view'
+  }, [(0, _reflex.thunk)('dashboard-sidebar', Sidebar.view, model.sidebar, (0, _reflex.forward)(address, TagSidebar)), _reflex.html.div({
+    className: 'dashboard-content split-view-content'
+  }, [_reflex.html.div({
+    className: 'dashboard-camera-plug'
+  }, [_reflex.html.img({
+    src: 'assets/camera.svg',
+    className: 'dashboard-camera-plug--icon'
+  }), _reflex.html.span({}, [(0, _lang.localize)('No camera data yet')])])])]);
 };
 
 // Utils
@@ -32894,13 +32867,13 @@ var isReady = function isReady(model) {
 };
 
 var templateVideoUrl = function templateVideoUrl(model) {
-  return (0, _stache.render)(TIMELAPSE_TEMPLATE, {
+  return (0, _stache.render)(_openagConfig.environmental_data_point.timelapse, {
     origin_url: model.origin,
     recipe_start_id: model.recipeStartID
   });
 };
 
-},{"../../openag-config":207,"../common/stache":232,"../common/unknown":234,"../lang/functional":256,"./dashboard/sidebar":248,"reflex":178}],248:[function(require,module,exports){
+},{"../../openag-config":207,"../common/lang":222,"../common/stache":231,"../common/unknown":233,"../lang/functional":255,"./dashboard/sidebar":247,"reflex":178}],247:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33020,7 +32993,7 @@ var view = exports.view = function view(model, address) {
   }, [(0, _reflex.thunk)('chart-sidebar-air-temperature', AirTemperature.view, model.airTemperature, (0, _reflex.forward)(address, TagAirTemperature))])])]);
 };
 
-},{"../../common/cursor":215,"../../common/lang":222,"../../common/prelude":227,"../../common/unknown":234,"../../lang/functional":256,"../sidebar/air-temperature":251,"../sidebar/recipe":252,"reflex":178}],249:[function(require,module,exports){
+},{"../../common/cursor":215,"../../common/lang":222,"../../common/prelude":226,"../../common/unknown":233,"../../lang/functional":255,"../sidebar/air-temperature":250,"../sidebar/recipe":251,"reflex":178}],248:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33144,7 +33117,7 @@ var findAirTemperature = exports.findAirTemperature = function findAirTemperatur
 // of being an array. Then only read datapoints that exist in the chart.
 // Only NumberDataPoints are supported for chart config in openag-config.json.
 
-},{"../common/maybe":223,"lodash/findLast":115}],250:[function(require,module,exports){
+},{"../common/maybe":223,"lodash/findLast":115}],249:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33269,7 +33242,7 @@ var templateCsvUrl = function templateCsvUrl(origin, environmentID, variable) {
   });
 };
 
-},{"../../openag-config.json":207,"../common/attr":211,"../common/cursor":215,"../common/lang":222,"../common/modal":224,"../common/prelude":227,"../common/stache":232,"../common/unknown":234,"reflex":178}],251:[function(require,module,exports){
+},{"../../openag-config.json":207,"../common/attr":211,"../common/cursor":215,"../common/lang":222,"../common/modal":224,"../common/prelude":226,"../common/stache":231,"../common/unknown":233,"reflex":178}],250:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33327,7 +33300,7 @@ var readTemperature = function readTemperature(value) {
   return Math.round(value) + '';
 };
 
-},{"../../common/unknown":234,"reflex":178}],252:[function(require,module,exports){
+},{"../../common/unknown":233,"reflex":178}],251:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33404,7 +33377,7 @@ var readName = function readName(model) {
   return model.name ? model.name : (0, _lang.localize)('None');
 };
 
-},{"../../common/lang":222,"../../common/prelude":227,"../../common/unknown":234,"reflex":178}],253:[function(require,module,exports){
+},{"../../common/lang":222,"../../common/prelude":226,"../../common/unknown":233,"reflex":178}],252:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33442,7 +33415,7 @@ var view = exports.view = function view(model, address) {
   }, [(0, _lang.localize)('Export CSV')])])]);
 };
 
-},{"../common/lang":222,"../common/stache":232,"reflex":178}],254:[function(require,module,exports){
+},{"../common/lang":222,"../common/stache":231,"reflex":178}],253:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33576,7 +33549,7 @@ var readDoc = function readDoc(doc) {
   };
 };
 
-},{"../openag-config.json":207,"./common/database":216,"./common/prelude":227,"./common/stache":232,"./common/unknown":234,"pouchdb-browser":148,"reflex":178}],255:[function(require,module,exports){
+},{"../openag-config.json":207,"./common/database":216,"./common/prelude":226,"./common/stache":231,"./common/unknown":233,"pouchdb-browser":148,"reflex":178}],254:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34053,7 +34026,7 @@ var readOptionFromRecord = function readOptionFromRecord(_ref) {
   return (0, _option.assemble)(_id, _id, _id, false);
 };
 
-},{"../openag-config.json":207,"./common/attr":211,"./common/button":213,"./common/cursor":215,"./common/database":216,"./common/lang":222,"./common/modal":224,"./common/option":225,"./common/prelude":227,"./common/request":228,"./common/result":229,"./common/select":231,"./common/stache":232,"./common/unknown":234,"./common/url":235,"./common/validator":236,"./lang/functional":256,"pouchdb-browser":148,"reflex":178}],256:[function(require,module,exports){
+},{"../openag-config.json":207,"./common/attr":211,"./common/button":213,"./common/cursor":215,"./common/database":216,"./common/lang":222,"./common/modal":224,"./common/option":225,"./common/prelude":226,"./common/request":227,"./common/result":228,"./common/select":230,"./common/stache":231,"./common/unknown":233,"./common/url":234,"./common/validator":235,"./lang/functional":255,"pouchdb-browser":148,"reflex":178}],255:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34123,7 +34096,7 @@ var constant = exports.constant = function constant(value) {
   };
 };
 
-},{}],257:[function(require,module,exports){
+},{}],256:[function(require,module,exports){
 'use strict';
 
 var _openagConfig = require('../openag-config.json');
@@ -34159,7 +34132,7 @@ var renderer = new _reflexVirtualDomDriver.Renderer({ target: document.body });
 application.view.subscribe(renderer.address);
 application.task.subscribe(_reflex.Effects.driver(application.address));
 
-},{"../openag-config.json":207,"./app":209,"./devtools":237,"reflex":178,"reflex-virtual-dom-driver":170}],258:[function(require,module,exports){
+},{"../openag-config.json":207,"./app":209,"./devtools":236,"reflex":178,"reflex-virtual-dom-driver":170}],257:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34343,7 +34316,7 @@ var updateMigrate = function updateMigrate(model, record) {
   return update(model, action);
 };
 
-},{"../openag-config.json":207,"../package.json":208,"./common/database":216,"./common/prelude.js":227,"./common/result":229,"./common/unknown":234,"pouchdb-browser":148,"reflex":178}],259:[function(require,module,exports){
+},{"../openag-config.json":207,"../package.json":208,"./common/database":216,"./common/prelude.js":226,"./common/result":228,"./common/unknown":233,"pouchdb-browser":148,"reflex":178}],258:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34366,7 +34339,7 @@ var view = exports.view = function view(model, address) {
   }, [String(model._id)]);
 };
 
-},{"reflex":178}],260:[function(require,module,exports){
+},{"reflex":178}],259:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34734,7 +34707,7 @@ var templateRecipesDatabase = function templateRecipesDatabase(origin) {
   });
 };
 
-},{"../openag-config.json":207,"./common/attr":211,"./common/banner":212,"./common/cursor":215,"./common/database":216,"./common/indexed":220,"./common/lang":222,"./common/modal":224,"./common/prelude":227,"./common/result":229,"./common/stache":232,"./common/unknown":234,"./lang/functional":256,"./recipe":259,"./recipes/form":261,"pouchdb-browser":148,"reflex":178}],261:[function(require,module,exports){
+},{"../openag-config.json":207,"./common/attr":211,"./common/banner":212,"./common/cursor":215,"./common/database":216,"./common/indexed":220,"./common/lang":222,"./common/modal":224,"./common/prelude":226,"./common/result":228,"./common/stache":231,"./common/unknown":233,"./lang/functional":255,"./recipe":258,"./recipes/form":260,"pouchdb-browser":148,"reflex":178}],260:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34923,4 +34896,4 @@ var view = exports.view = function view(model, address, isActive) {
   }, [(0, _reflex.thunk)('textarea', Input.viewTextarea, model.textarea, (0, _reflex.forward)(address, TextareaAction), 'rform-textarea', 'rform-textarea txt-textarea')])])])]);
 };
 
-},{"../common/attr":211,"../common/banner":212,"../common/cursor":215,"../common/input":221,"../common/lang":222,"../common/prelude":227,"../common/unknown":234,"../recipes":260,"reflex":178}]},{},[257]);
+},{"../common/attr":211,"../common/banner":212,"../common/cursor":215,"../common/input":221,"../common/lang":222,"../common/prelude":226,"../common/unknown":233,"../recipes":259,"reflex":178}]},{},[256]);
