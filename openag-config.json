@@ -1,5 +1,5 @@
 {
-  "root_url": "http://98.202.80.100",
+  "root_url": null,
   "origin_url": "{{root_url}}:5984",
   "api_url": "{{origin_url}}/_openag/api/0.0.1",
   "start_recipe_url": "{{api_url}}/service/environments/{{environment}}/start_recipe",
