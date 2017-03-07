@@ -1,16 +1,18 @@
 /*
 The dashboard displays the latest camera information from the Food Computer.
 */
-import {html, forward, Effects, thunk} from 'reflex';
+import {html, forward, Effects, Task, thunk} from 'reflex';
 import {
   environmental_data_point as ENVIRONMENTAL_DATA_POINT,
   demo as DEMO
 } from '../../openag-config';
-import {compose} from '../lang/functional';
+import {compose, constant} from '../lang/functional';
 import {render as renderTemplate} from '../common/stache';
 import {update as updateUnknown} from '../common/unknown';
 import {localize} from '../common/lang';
 import * as Sidebar from './dashboard/sidebar';
+
+const REFRESH_TIMEOUT = 30 * 1000;
 
 // Actions
 
@@ -70,10 +72,14 @@ const SidebarAction = action => ({
 const SetSidebarRecipe = compose(SidebarAction, Sidebar.SetRecipe);
 export const SetAirTemperature = compose(SidebarAction, Sidebar.SetAirTemperature);
 
+const RefreshImg = {type: 'RefreshImg'};
+const AlwaysRefreshImg = constant(RefreshImg);
+
 // Init and update
 
 class Model {
   constructor(
+    timestamp,
     root,
     origin,
     recipeStartID,
@@ -82,6 +88,7 @@ class Model {
     sidebar,
     imageID
   ) {
+    this.timestamp = timestamp;
     this.root = root;
     this.origin = origin;
     this.recipeStartID = recipeStartID;
@@ -104,6 +111,7 @@ export const init = () => {
 
   return [
     new Model(
+      Date.now(),
       null,
       null,
       null,
@@ -112,13 +120,16 @@ export const init = () => {
       sidebar,
       null
     ),
-    Effects.none
+    Effects.receive(RefreshImg)
   ];
 }
 
 export const update = (model, action) =>
   action.type === 'UpdateAerialImage' ?
-  swapImageID(model, action.doc._id) :
+  // @HACK for wfp demo... pass
+  [model, Effects.none] :
+  action.type === 'RefreshImg' ?
+  refreshImg(model) :
   action.type === 'Sidebar' ?
   delegateSidebarUpdate(model, action.source) :
   action.type === 'SetRecipe' ?
@@ -128,11 +139,6 @@ export const update = (model, action) =>
   action.type === 'FinishLoading' ?
   finishLoading(model) :
   updateUnknown(model, action);
-
-const updateAerialImage = (model, doc) => {
-
-}
-
 
 const setRecipe = (model, id, name) => {
   // Update sidebar model with id and name
@@ -145,6 +151,7 @@ const setRecipe = (model, id, name) => {
 
   // Create new model with id and new sidebar model
   const next = new Model(
+    model.timestamp,
     model.root,
     model.origin,
     id,
@@ -161,6 +168,7 @@ const setRecipe = (model, id, name) => {
 // Configure origin url on model
 const configure = (model, root, origin) => [
   new Model(
+    model.timestamp,
     root,
     origin,
     model.recipeStartID,
@@ -175,6 +183,7 @@ const configure = (model, root, origin) => [
 // Flag initial loading state as finished.
 const finishLoading = model => [
   new Model(
+    model.timestamp,
     model.root,
     model.origin,
     model.recipeStartID,
@@ -187,8 +196,23 @@ const finishLoading = model => [
   Effects.none
 ];
 
+const refreshImg = (model) => [
+  new Model(
+    Date.now(),
+    model.root,
+    model.origin,
+    model.recipeStartID,
+    model.hasTimelapse,
+    model.isLoading,
+    model.sidebar,
+    model.imageID
+  ),
+  Effects.perform(Task.sleep(REFRESH_TIMEOUT)).map(AlwaysRefreshImg)
+];
+
 const swapImageID = (model, imageID) => [
   new Model(
+    model.timestamp,
     model.root,
     model.origin,
     model.recipeStartID,
@@ -198,10 +222,11 @@ const swapImageID = (model, imageID) => [
     imageID
   ),
   Effects.none
-]
+];
 
 const swapSidebar = (model, [sidebar, fx]) => [
   new Model(
+    model.timestamp,
     model.root,
     model.origin,
     model.recipeStartID,
@@ -221,8 +246,6 @@ const delegateSidebarUpdate = (model, action) =>
 export const view = (model, address) =>
   model.isLoading ?
   viewLoading(model, address) :
-  !model.imageID ?
-  viewEmpty(model, address) :
   viewReady(model, address);
 
 const viewReady = (model, address) =>
@@ -295,7 +318,8 @@ const viewEmpty = (model, address) =>
 // Utils
 const templateImgUrl = model =>
   renderTemplate(DEMO.image_url, {
-    root_url: model.root
+    root_url: model.root,
+    timestamp: model.timestamp
   });
 
 const templateVideoUrl = model =>
