@@ -4,8 +4,7 @@ The dashboard displays the latest camera information from the Food Computer.
 import {html, forward, Effects, thunk} from 'reflex';
 import {
   environmental_data_point as ENVIRONMENTAL_DATA_POINT,
-  demo as DEMO,
-  root_url as ROOT_URL
+  demo as DEMO
 } from '../../openag-config';
 import {compose} from '../lang/functional';
 import {render as renderTemplate} from '../common/stache';
@@ -52,8 +51,9 @@ export const decodeRecipe = doc =>
     hasTimelapseAttachment(doc)
   );
 
-export const Configure = origin => ({
+export const Configure = (root, origin) => ({
   type: 'Configure',
+  root,
   origin
 });
 
@@ -74,6 +74,7 @@ export const SetAirTemperature = compose(SidebarAction, Sidebar.SetAirTemperatur
 
 class Model {
   constructor(
+    root,
     origin,
     recipeStartID,
     hasTimelapse,
@@ -81,6 +82,7 @@ class Model {
     sidebar,
     imageID
   ) {
+    this.root = root;
     this.origin = origin;
     this.recipeStartID = recipeStartID;
     // We have to deal with 3 states:
@@ -104,6 +106,7 @@ export const init = () => {
     new Model(
       null,
       null,
+      null,
       hasTimelapse,
       isLoading,
       sidebar,
@@ -121,7 +124,7 @@ export const update = (model, action) =>
   action.type === 'SetRecipe' ?
   setRecipe(model, action.id, action.name) :
   action.type === 'Configure' ?
-  configure(model, action.origin) :
+  configure(model, action.root, action.origin) :
   action.type === 'FinishLoading' ?
   finishLoading(model) :
   updateUnknown(model, action);
@@ -142,6 +145,7 @@ const setRecipe = (model, id, name) => {
 
   // Create new model with id and new sidebar model
   const next = new Model(
+    model.root,
     model.origin,
     id,
     model.hasTimelapse,
@@ -155,8 +159,9 @@ const setRecipe = (model, id, name) => {
 }
 
 // Configure origin url on model
-const configure = (model, origin) => [
+const configure = (model, root, origin) => [
   new Model(
+    root,
     origin,
     model.recipeStartID,
     model.hasTimelapse,
@@ -170,6 +175,7 @@ const configure = (model, origin) => [
 // Flag initial loading state as finished.
 const finishLoading = model => [
   new Model(
+    model.root,
     model.origin,
     model.recipeStartID,
     model.hasTimelapse,
@@ -183,6 +189,7 @@ const finishLoading = model => [
 
 const swapImageID = (model, imageID) => [
   new Model(
+    model.root,
     model.origin,
     model.recipeStartID,
     model.hasTimelapse,
@@ -195,6 +202,7 @@ const swapImageID = (model, imageID) => [
 
 const swapSidebar = (model, [sidebar, fx]) => [
   new Model(
+    model.root,
     model.origin,
     model.recipeStartID,
     model.hasTimelapse,
@@ -287,7 +295,7 @@ const viewEmpty = (model, address) =>
 // Utils
 const templateImgUrl = model =>
   renderTemplate(DEMO.image_url, {
-    root_url: ROOT_URL
+    root_url: model.root
   });
 
 const templateVideoUrl = model =>

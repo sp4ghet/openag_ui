@@ -16,9 +16,10 @@ import * as Environment from './environment';
 import * as Recipes from './recipes';
 import {compose} from './lang/functional';
 
-const _url_template = {root_url: Config.root_url || window.location.origin};
-const API_URL = Template.render(Config.api_url, _url_template);
-const ORIGIN_URL = Template.render(Config.origin_url, _url_template);
+
+const ROOT_URL = readRootUrl(Config.root_url || window.location.origin);
+const ORIGIN_URL = Template.render(Config.origin_url, {root_url: ROOT_URL});
+const API_URL = Template.render(Config.api_url, {origin_url: ORIGIN_URL});
 // @FIXME we hardcode active environment for the moment. This works because
 // personal food computers manage just one environment. This should be
 // kept in the app state instead. We can pick a default, but let the user
@@ -152,6 +153,7 @@ export const init = () => {
   const configure = Configure({
     api: API_URL,
     origin: ORIGIN_URL,
+    root: ROOT_URL,
     environmentID: ENVIRONMENT_ID,
     environmentName: ENVIRONMENT_NAME
   });
@@ -309,7 +311,7 @@ const recipePostedError = (model, error) => {
   return update(model, AlertDismissableBanner(message));
 }
 
-const configure = (model, {api, origin, environmentID, environmentName}) => {
+const configure = (model, {api, origin, root, environmentID, environmentName}) => {
   // Restore serialized data from stored record.
   // Merge into in-memory app model.
   const next = merge(model, {
@@ -319,7 +321,7 @@ const configure = (model, {api, origin, environmentID, environmentName}) => {
 
   return batch(update, next, [
     ConfigureAppNav(environmentName),
-    ConfigureEnvironment(environmentID, environmentName, api, origin),
+    ConfigureEnvironment(environmentID, environmentName, root, api, origin),
     ConfigureEnvironments(origin),
     ConfigureRecipes(origin)
   ]);
