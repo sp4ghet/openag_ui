@@ -173,7 +173,7 @@ const sync = model => {
   // @NOTE the strict equality check is important, since origin is allowed
   // to be an empty string!
   if (model.origin !== null) {
-    const origin = templateRecipesDatabase(model.origin);
+    const origin = templateRecipesDb(model.origin);
     return [model, Database.sync(DB, origin).map(Synced)];
   }
   else {
@@ -233,16 +233,15 @@ const startByID = (model, id) => {
 const activatePanel = (model, id) =>
   [merge(model, {activePanel: id}), Effects.none];
 
-const put = (model, doc) => {
-  // Attempt to store it in DB.
-  return [model, Database.put(DB, doc).map(Putted)];
-}
+const put = (model, doc) => [
+  model,
+  Request.put(templateRecipePut(model.origin, doc._id), doc).map(Putted)
+];
 
 const puttedOk = (model, value) =>
   batch(update, model, [
     ClearRecipesForm,
     RestoreRecipes,
-    Sync,
     ActivatePanel(null),
     Notify(localize('Recipe Added'))
   ]);
@@ -398,7 +397,13 @@ const templateAllDocsUrl = origin =>
     origin_url: origin
   });
 
-const templateRecipesDatabase = origin =>
+const templateRecipePut = (origin, id) =>
+  Template.render(Config.recipes.doc, {
+    origin_url: origin,
+    id
+  });
+
+const templateRecipesDb = origin =>
   Template.render(Config.recipes.origin, {
     origin_url: origin
   });

@@ -23,6 +23,7 @@
   "recipes": {
     "local": "recipes",
     "origin": "{{origin_url}}/recipes",
+    "doc": "{{origin_url}}/recipes/{{id}}",
     "all_docs": "{{origin_url}}/recipes/_all_docs?include_docs=true"
   },
 
