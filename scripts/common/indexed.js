@@ -77,6 +77,18 @@ export const add = (model, id, entry) =>
     })
   });
 
+export const insert = (model, id, entry, compare) => {
+  const order = [id, ...model.order];
+  order.sort(compare);
+  return merge(model, {
+    // Prepend new recipe id
+    order,
+    entries: merge(model.entries, {
+      [id]: entry
+    })
+  });
+}
+
 // Given a view function and an action tagging factory function, will return
 // a view that will list out all sub-views.
 export const children = (view, tagByID) => (model, address) =>
@@ -130,5 +142,14 @@ export const updateWithID = (update, tag, model, id, action) => {
       merge(model, {entries: merge(model.entries, {[id]: entry})}),
       fx.map(tag)
     ];
+  }
+}
+
+export const compareById = (a) => {
+  if (a > b) {
+    return 1;
+  }
+  else {
+    return -1;
   }
 }
