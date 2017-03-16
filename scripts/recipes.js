@@ -3,6 +3,7 @@ import * as Config from '../openag-config.json';
 import PouchDB from 'pouchdb-browser';
 import * as Template from './common/stache';
 import * as Database from './common/database';
+import * as Request from './common/request';
 import * as Indexed from './common/indexed';
 import * as Unknown from './common/unknown';
 import * as Banner from './common/banner';
@@ -72,7 +73,7 @@ export const Configure = origin => ({
   origin
 });
 
-// Restore recipes in-memory from PouchDB
+// Restore recipes by fetching over HTTP
 const RestoreRecipes = {type: 'RestoreRecipes'};
 
 // Response from recipe restore
@@ -191,8 +192,14 @@ const syncedError = model => {
   return update(model, AlertDismissable(message));
 }
 
-const restoredOk = (model, docs) => {
-  const recipes = docs.map(Recipe.fromDoc);
+// Send restore GET request to _all_docs url.
+const restore = model => [
+  model,
+  Request.get(templateAllDocsUrl(model.origin)).map(RestoredRecipes)
+];
+
+const restoredOk = (model, resp) => {
+  const recipes = Database.readAllDocs(resp).map(Recipe.fromDoc);
   const next = merge(model, {
     // Build an array of ordered recipe IDs
     order: Indexed.pluckID(recipes),
@@ -274,7 +281,7 @@ export const update = (model, action) =>
     puttedError(model, action.result.error)
   ) :
   action.type === 'RestoreRecipes' ?
-  [model, Database.restore(DB).map(RestoredRecipes)] :
+  restore(model) :
   action.type === 'RestoredRecipes' ?
   (
     action.result.isOk ?
@@ -385,6 +392,11 @@ const onRecipeForm = port(event => {
 })
 
 // Helpers
+
+const templateAllDocsUrl = origin =>
+  Template.render(Config.recipes.all_docs, {
+    origin_url: origin
+  });
 
 const templateRecipesDatabase = origin =>
   Template.render(Config.recipes.origin, {
