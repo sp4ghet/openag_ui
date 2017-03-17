@@ -411,8 +411,3 @@ const templateRecipePut = (origin, id) =>
     origin_url: origin,
     id
   });
-
-const templateRecipesDb = origin =>
-  Template.render(Config.recipes.origin, {
-    origin_url: origin
-  });
