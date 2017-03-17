@@ -1,6 +1,5 @@
 import {html, forward, Effects, Task, thunk} from 'reflex';
 import * as Config from '../openag-config.json';
-import PouchDB from 'pouchdb-browser';
 import * as Template from './common/stache';
 import * as Database from './common/database';
 import * as Request from './common/request';
@@ -16,8 +15,6 @@ import {localize} from './common/lang';
 import {compose, constant} from './lang/functional';
 import * as RecipesForm from './recipes/form';
 import * as Recipe from './recipe';
-
-const DB = new PouchDB(Config.recipes.local);
 
 // Actions and tagging functions
 
@@ -110,11 +107,6 @@ const Putted = result => ({
   result
 });
 
-// Request database sync
-const Sync = {type: 'Sync'};
-// Confirm sync.
-const Synced = Database.Synced;
-
 export const Open = TagModal(Modal.Open);
 export const Close = TagModal(Modal.Close);
 
@@ -204,29 +196,6 @@ const updateRecipesForm = cursor({
   tag: TagRecipesForm
 });
 
-const sync = model => {
-  // @NOTE the strict equality check is important, since origin is allowed
-  // to be an empty string!
-  if (model.origin !== null) {
-    const origin = templateRecipesDb(model.origin);
-    return [model, Database.sync(DB, origin).map(Synced)];
-  }
-  else {
-    // @TODO this case should never happen, but perhaps we want to notify the
-    // user something went wrong?
-    console.warn('Recipe database sync attempted before origin was added to model');
-    return [model, Effects.none];
-  }
-}
-
-const syncedOk = model =>
-  update(model, RestoreRecipes);
-
-const syncedError = model => {
-  const message = localize("Couldn't sync with the cloud. Using local database.");
-  return update(model, AlertDismissable(message));
-}
-
 // Send restore GET request to _all_docs url.
 const restore = model => [
   model,
@@ -295,11 +264,7 @@ const puttedError = (model, error) =>
 
 const configure = (model, origin) => {
   const next = merge(model, {origin});
-
-  return batch(update, next, [
-    RestoreRecipes,
-    Sync
-  ]);
+  return update(next, RestoreRecipes);
 }
 
 export const update = (model, action) =>
@@ -337,14 +302,6 @@ export const update = (model, action) =>
   startByID(model, action.id) :
   action.type === 'ActivatePanel' ?
   activatePanel(model, action.id) :
-  action.type === 'Sync' ?
-  sync(model) :
-  action.type === 'Synced' ?
-  (
-    action.result.isOk ?
-    syncedOk(model) :
-    syncedError(model)
-  ) :
   action.type === 'Configure' ?
   configure(model, action.origin) :
   Unknown.update(model, action);
