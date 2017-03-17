@@ -11,6 +11,7 @@ import {merge, tag, tagged, batch, annotate, port} from './common/prelude';
 import * as Modal from './common/modal';
 import {cursor} from './common/cursor';
 import {classed, toggle} from './common/attr';
+import * as Progress from './common/progress';
 import {localize} from './common/lang';
 import {compose, constant} from './lang/functional';
 import * as RecipesForm from './recipes/form';
@@ -34,6 +35,20 @@ const TagBanner = source => ({
   source
 });
 
+const TagProgress = source => ({
+  type: 'Progress',
+  source
+});
+
+const Loading = TagProgress(Progress.Loading);
+const Loaded = TagProgress(Progress.Loaded);
+
+// Attempt to publish a recipe to the database.
+const Publish = recipe => ({
+  type: 'Publish',
+  recipe
+});
+
 const Notify = compose(TagBanner, Banner.Notify);
 const AlertRefreshable = compose(TagBanner, Banner.AlertRefreshable);
 const AlertDismissable = compose(TagBanner, Banner.AlertDismissable);
@@ -43,7 +58,7 @@ const TagRecipesForm = action =>
   action.type === 'Back' ?
   ActivatePanel(null) :
   action.type === 'Submitted' ?
-  Put(action.recipe) :
+  Publish(action.recipe) :
   RecipesFormAction(action);
 
 const RecipesFormAction = action => ({
@@ -82,8 +97,18 @@ const RestoredRecipes = result => ({
   result
 });
 
-const Put = Database.Put;
-const Putted = Database.Putted;
+// Put request action
+const Put = (url, body) => ({
+  type: 'Put',
+  url,
+  body
+});
+
+// Put request response
+const Putted = result => ({
+  type: 'Putted',
+  result
+});
 
 // Request database sync
 const Sync = {type: 'Sync'};
@@ -123,6 +148,7 @@ const NoOp = Indexed.NoOp;
 export const init = () => {
   const [recipesForm, recipesFormFx] = RecipesForm.init();
   const [banner, bannerFx] = Banner.init();
+  const [progress, progressFx] = Progress.init();
 
   return [
     {
@@ -136,11 +162,13 @@ export const init = () => {
       // Index all recipes by ID
       entries: {},
       recipesForm,
-      banner
+      banner,
+      progress
     },
     Effects.batch([
       recipesFormFx.map(TagRecipesForm),
-      bannerFx.map(TagBanner)
+      bannerFx.map(TagBanner),
+      progressFx.map(TagProgress)
     ])
   ];
 };
@@ -160,6 +188,13 @@ const updateBanner = cursor({
   set: (model, banner) => merge(model, {banner}),
   update: Banner.update,
   tag: TagBanner
+});
+
+const updateProgress = cursor({
+  get: model => model.progress,
+  set: (model, progress) => merge(model, {progress}),
+  update: Progress.update,
+  tag: TagProgress
 });
 
 const updateRecipesForm = cursor({
@@ -206,7 +241,7 @@ const restoredOk = (model, resp) => {
     // Index all recipes by ID
     entries: Indexed.indexByID(recipes)
   });
-  return [next, Effects.none];
+  return update(next, Loaded);
 }
 
 const restoredError = (model, error) => {
@@ -233,9 +268,15 @@ const startByID = (model, id) => {
 const activatePanel = (model, id) =>
   [merge(model, {activePanel: id}), Effects.none];
 
-const put = (model, doc) => [
+const publish = (model, recipe) =>
+  batch(update, model, [
+    Loading,
+    Put(templateRecipePut(model.origin, recipe._id), recipe)
+  ]);
+
+const put = (model, url, body) => [
   model,
-  Request.put(templateRecipePut(model.origin, doc._id), doc).map(Putted)
+  Request.put(url, body).map(Putted)
 ];
 
 const puttedOk = (model, value) =>
@@ -246,10 +287,11 @@ const puttedOk = (model, value) =>
     Notify(localize('Recipe Added'))
   ]);
 
-const puttedError = (model, error) => {
-  const action = AlertRecipesForm(String(error));
-  return update(model, action);
-}
+const puttedError = (model, error) =>
+  batch(update, model, [
+    Loaded,
+    AlertRecipesForm(String(error))
+  ]);
 
 const configure = (model, origin) => {
   const next = merge(model, {origin});
@@ -271,8 +313,12 @@ export const update = (model, action) =>
   updateModal(model, action.source) :
   action.type === 'NoOp' ?
   [model, Effects.none] :
+  action.type === 'Publish' ?
+  publish(model, action.recipe) :
+  action.type === 'Progress' ?
+  updateProgress(model, action.source) :
   action.type === 'Put' ?
-  put(model, action.value) :
+  put(model, action.url, action.body) :
   action.type === 'Putted' ?
   (
     action.result.isOk ?
@@ -324,6 +370,12 @@ export const view = (model, address) => {
       }),
       open: toggle(model.isOpen, 'open')
     }, [
+      thunk(
+        'recipes-progress',
+        Progress.view,
+        model.progress,
+        forward(address, TagProgress)
+      ),
       html.div({
         className: classed({
           'panels--main': true,

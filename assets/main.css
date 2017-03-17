@@ -1011,6 +1011,24 @@ p {
   box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.12), 0px 1px 2px 0px rgba(0,0,0,0.24);
 }
 
+/* Progress - loading bar
+----------------------------------------------------------------------------- */
+
+.progress {
+  height: 12px;
+  background: blue;
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 200ms linear;
+  pointer-events: none;
+}
+
+.progress-is-loading {
+  opacity: 1;
+}
+
 /* FTU - First Time Use
 ----------------------------------------------------------------------------- */
 
