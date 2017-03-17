@@ -10,7 +10,6 @@ import {merge, tag, tagged, batch, annotate, port} from './common/prelude';
 import * as Modal from './common/modal';
 import {cursor} from './common/cursor';
 import {classed, toggle} from './common/attr';
-import * as Progress from './common/progress';
 import {localize} from './common/lang';
 import {compose, constant} from './lang/functional';
 import * as RecipesForm from './recipes/form';
@@ -32,20 +31,6 @@ const TagBanner = source => ({
   source
 });
 
-const TagProgress = source => ({
-  type: 'Progress',
-  source
-});
-
-const Loading = TagProgress(Progress.Loading);
-const Loaded = TagProgress(Progress.Loaded);
-
-// Attempt to publish a recipe to the database.
-const Publish = recipe => ({
-  type: 'Publish',
-  recipe
-});
-
 const Notify = compose(TagBanner, Banner.Notify);
 const AlertRefreshable = compose(TagBanner, Banner.AlertRefreshable);
 const AlertDismissable = compose(TagBanner, Banner.AlertDismissable);
@@ -54,9 +39,11 @@ const FailRecipeStart = AlertDismissable("Couldn't start recipe");
 const TagRecipesForm = action =>
   action.type === 'Back' ?
   ActivatePanel(null) :
-  action.type === 'Submitted' ?
-  Publish(action.recipe) :
+  action.type === 'ReceiptAddRecipe' ?
+  ReceiptAddRecipe(action.recipe) :
   RecipesFormAction(action);
+
+const ConfigureRecipesForm = compose(TagRecipesForm, RecipesForm.Configure);
 
 const RecipesFormAction = action => ({
   type: 'RecipesForm',
@@ -85,25 +72,23 @@ export const Configure = origin => ({
   origin
 });
 
+const ReceiptAddRecipe = recipe => ({
+  type: 'ReceiptAddRecipe',
+  recipe
+});
+
+// Insert recipe into model
+const InsertRecipe = recipe => ({
+  type: 'InsertRecipe',
+  recipe
+});
+
 // Restore recipes by fetching over HTTP
 const RestoreRecipes = {type: 'RestoreRecipes'};
 
 // Response from recipe restore
 const RestoredRecipes = result => ({
   type: 'RestoredRecipes',
-  result
-});
-
-// Put request action
-const Put = (url, body) => ({
-  type: 'Put',
-  url,
-  body
-});
-
-// Put request response
-const Putted = result => ({
-  type: 'Putted',
   result
 });
 
@@ -140,7 +125,6 @@ const NoOp = Indexed.NoOp;
 export const init = () => {
   const [recipesForm, recipesFormFx] = RecipesForm.init();
   const [banner, bannerFx] = Banner.init();
-  const [progress, progressFx] = Progress.init();
 
   return [
     {
@@ -154,13 +138,11 @@ export const init = () => {
       // Index all recipes by ID
       entries: {},
       recipesForm,
-      banner,
-      progress
+      banner
     },
     Effects.batch([
       recipesFormFx.map(TagRecipesForm),
-      bannerFx.map(TagBanner),
-      progressFx.map(TagProgress)
+      bannerFx.map(TagBanner)
     ])
   ];
 };
@@ -180,13 +162,6 @@ const updateBanner = cursor({
   set: (model, banner) => merge(model, {banner}),
   update: Banner.update,
   tag: TagBanner
-});
-
-const updateProgress = cursor({
-  get: model => model.progress,
-  set: (model, progress) => merge(model, {progress}),
-  update: Progress.update,
-  tag: TagProgress
 });
 
 const updateRecipesForm = cursor({
@@ -210,13 +185,25 @@ const restoredOk = (model, resp) => {
     // Index all recipes by ID
     entries: Indexed.indexByID(recipes)
   });
-  return update(next, Loaded);
+  return [next, Effects.none];
 }
 
 const restoredError = (model, error) => {
   const message = localize("Hmm, couldn't read from your browser's database.");
   return update(model, AlertRefreshable(message));
 }
+
+const receiptAddRecipe = (model, value) =>
+  batch(update, model, [
+    InsertRecipe(model, recipe),
+    ActivatePanel(null),
+    Notify(localize('Recipe Added'))
+  ]);
+
+const insertRecipe = (model, recipe) => [
+  Indexed.insert(model, recipe._id, recipe, Indexed.compareValue),
+  Effects.none
+];
 
 // Activate recipe by id
 const startByID = (model, id) => {
@@ -237,34 +224,12 @@ const startByID = (model, id) => {
 const activatePanel = (model, id) =>
   [merge(model, {activePanel: id}), Effects.none];
 
-const publish = (model, recipe) =>
-  batch(update, model, [
-    Loading,
-    Put(templateRecipePut(model.origin, recipe._id), recipe)
-  ]);
-
-const put = (model, url, body) => [
-  model,
-  Request.put(url, body).map(Putted)
-];
-
-const puttedOk = (model, value) =>
-  batch(update, model, [
-    ClearRecipesForm,
-    RestoreRecipes,
-    ActivatePanel(null),
-    Notify(localize('Recipe Added'))
-  ]);
-
-const puttedError = (model, error) =>
-  batch(update, model, [
-    Loaded,
-    AlertRecipesForm(String(error))
-  ]);
-
 const configure = (model, origin) => {
   const next = merge(model, {origin});
-  return update(next, RestoreRecipes);
+  return batch(update, next, [
+    RestoreRecipes,
+    ConfigureRecipesForm(origin)
+  ]);
 }
 
 export const update = (model, action) =>
@@ -278,18 +243,6 @@ export const update = (model, action) =>
   updateModal(model, action.source) :
   action.type === 'NoOp' ?
   [model, Effects.none] :
-  action.type === 'Publish' ?
-  publish(model, action.recipe) :
-  action.type === 'Progress' ?
-  updateProgress(model, action.source) :
-  action.type === 'Put' ?
-  put(model, action.url, action.body) :
-  action.type === 'Putted' ?
-  (
-    action.result.isOk ?
-    puttedOk(model, action.result.value) :
-    puttedError(model, action.result.error)
-  ) :
   action.type === 'RestoreRecipes' ?
   restore(model) :
   action.type === 'RestoredRecipes' ?
@@ -298,6 +251,10 @@ export const update = (model, action) =>
     restoredOk(model, action.result.value) :
     restoredError(model, action.result.error)
   ) :
+  action.type === 'ReceiptAddRecipe' ?
+  receiptAddRecipe(model, action.recipe) :
+  action.type === 'InsertRecipe' ?
+  insertRecipe(model, action.recipe) :
   action.type === 'StartByID' ?
   startByID(model, action.id) :
   action.type === 'ActivatePanel' ?
@@ -327,12 +284,6 @@ export const view = (model, address) => {
       }),
       open: toggle(model.isOpen, 'open')
     }, [
-      thunk(
-        'recipes-progress',
-        Progress.view,
-        model.progress,
-        forward(address, TagProgress)
-      ),
       html.div({
         className: classed({
           'panels--main': true,
@@ -404,10 +355,4 @@ const onRecipeForm = port(event => {
 const templateAllDocsUrl = origin =>
   Template.render(Config.recipes.all_docs, {
     origin_url: origin
-  });
-
-const templateRecipePut = (origin, id) =>
-  Template.render(Config.recipes.doc, {
-    origin_url: origin,
-    id
   });

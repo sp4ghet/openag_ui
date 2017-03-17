@@ -1,9 +1,12 @@
 // @note this file is probably temporary, since authoring recipe JSON by
 // hand is a pain.
-
 import {html, forward, Effects, thunk} from 'reflex';
+import * as Config from '../../openag-config.json';
 import * as Banner from '../common/banner';
+import * as Progress from '../common/progress';
+import * as Request from '../common/request';
 import * as Unknown from '../common/unknown';
+import * as Template from '../common/stache';
 import {localize} from '../common/lang';
 import {merge, tag, batch, port} from '../common/prelude';
 import {cursor} from '../common/cursor';
@@ -18,18 +21,37 @@ const TextareaAction = tag('Textarea');
 
 // Actions
 
+export const Configure = (origin) => ({
+  type: 'Configure',
+  origin
+});
+
 export const Back = {
   type: 'Back'
 };
 
-// Submitting the form
-export const Submit = recipe => ({
-  type: 'Submit',
+// Action to send up to parent, notifying of recipe added to DB.
+const ReceiptAddRecipe = recipe => ({
+  type: 'ReceiptAddRecipe',
   recipe
 });
 
-export const Submitted = recipe => ({
-  type: 'Submitted',
+// Put request action
+const Put = (url, body) => ({
+  type: 'Put',
+  url,
+  body
+});
+
+// Put request response
+const Putted = result => ({
+  type: 'Putted',
+  result
+});
+
+// Submitting the form
+export const Submit = recipe => ({
+  type: 'Submit',
   recipe
 });
 
@@ -46,8 +68,21 @@ const TagBanner = source => ({
 
 export const Alert = compose(TagBanner, Banner.AlertDismissable);
 export const Notify = compose(TagBanner, Banner.Notify);
+export const AlertInvalid = TagBanner(Banner.AlertDismissable("Uh-oh! Invalid JSON."));
 
-const FailRecipeParse = TagBanner(Banner.AlertDismissable("Uh-oh! Invalid JSON."));
+// Attempt to publish a recipe to the database.
+const Publish = recipe => ({
+  type: 'Publish',
+  recipe
+});
+
+const TagProgress = source => ({
+  type: 'Progress',
+  source
+});
+
+const Loading = TagProgress(Progress.Loading);
+const Loaded = TagProgress(Progress.Loaded);
 
 // Init and update functions
 
@@ -55,14 +90,19 @@ export const init = () => {
   const placeholder = localize('Paste recipe JSON...');
   const [textarea, textareaFx] = Input.init('', null, placeholder);
   const [banner, bannerFx] = Banner.init();
+  const [progress, progressFx] = Progress.init();
+
   return [
     {
+      origin: null,
       isOpen: false,
+      banner,
       textarea,
-      banner
+      progress
     },
     textareaFx.map(TextareaAction),
-    bannerFx.map(TagBanner)
+    bannerFx.map(TagBanner),
+    progressFx.map(TagProgress)
   ];
 };
 
@@ -73,25 +113,69 @@ export const update = (model, action) =>
   updateBanner(model, action.source) :
   action.type === 'Textarea' ?
   updateTextarea(model, action.source) :
+  action.type === 'Progress' ?
+  updateProgress(model, action.source) :
   action.type === 'Submit' ?
   submit(model, action.recipe) :
+  action.type === 'Put' ?
+  put(model, action.url, action.body) :
+  action.type === 'Putted' ?
+  (
+    action.result.isOk ?
+    puttedOk(model, action.result.value) :
+    puttedError(model, action.result.error)
+  ) :
+  action.type === 'Publish' ?
+  publish(model, action.recipe) :
+  action.type === 'Configure' ?
+  [merge(model, {origin: action.origin}), Effects.none] :
   Unknown.update(model, action);
 
-const submit = (model, recipeJSON) => {
+const submit = (model, recipeString) => {
+  // We send an Effect up so that if an error is caused further down the line,
+  // it doesn't get caught by this try block.
   try {
-    const recipe = JSON.parse(recipeJSON);
-    return [
-      model,
-      // Send Submitted action up to parent
-      Effects.receive(Submitted(recipe))
-    ];
+    const recipe = JSON.parse(recipeString);
+    return [model, Effects.receive(Publish(recipe))];
   } catch (e) {
-    return [
-      model,
-      Effects.receive(FailRecipeParse)
-    ];
+    return [model, Effects.receive(AlertInvalid)];
   }
 }
+
+const publish = (model, recipe) =>
+  batch(update, model, [
+    Loading,
+    Put(templateRecipePut(model.origin, recipe._id), recipe)
+  ]);
+
+
+const put = (model, url, body) => [
+  model,
+  Request.put(url, body).map(Putted)
+];
+
+const puttedOk = (model, recipe) => {
+  // Cleanup
+  const [next, fx] = batch(update, model, [
+    Loaded,
+    Clear
+  ]);
+
+  return [
+    next,
+    Effects.batch([
+      fx,
+      // Notify parent
+      Effects.receive(ReceiptAddRecipe(recipe))
+    ])
+  ];
+}
+
+const puttedError = (model, error) =>
+  batch(update, model, [
+    Loaded,
+    Alert(String(error))
+  ]);
 
 const updateTextarea = cursor({
   get: model => model.textarea,
@@ -105,6 +189,13 @@ const updateBanner = cursor({
   set: (model, banner) => merge(model, {banner}),
   tag: TagBanner,
   update: Banner.update
+});
+
+const updateProgress = cursor({
+  get: model => model.progress,
+  set: (model, progress) => merge(model, {progress}),
+  update: Progress.update,
+  tag: TagProgress
 });
 
 // View
@@ -150,6 +241,12 @@ export const view = (model, address, isActive) => {
       ])
     ]),
     thunk(
+      'recipes-progress',
+      Progress.view,
+      model.progress,
+      forward(address, TagProgress)
+    ),
+    thunk(
       'recipe-form-banner',
       Banner.view,
       model.banner,
@@ -194,3 +291,9 @@ const onBack = port(event => {
   event.preventDefault();
   return Back;
 })
+
+const templateRecipePut = (origin, id) =>
+  Template.render(Config.recipes.doc, {
+    origin_url: origin,
+    id
+  });
