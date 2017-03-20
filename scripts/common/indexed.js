@@ -144,12 +144,3 @@ export const updateWithID = (update, tag, model, id, action) => {
     ];
   }
 }
-
-export const compareValue = (a, b) => {
-  if (a > b) {
-    return 1;
-  }
-  else {
-    return -1;
-  }
-}
