@@ -7,6 +7,7 @@ import * as Progress from '../common/progress';
 import * as Request from '../common/request';
 import * as Unknown from '../common/unknown';
 import * as Template from '../common/stache';
+import * as Outbox from '../common/outbox';
 import {localize} from '../common/lang';
 import {merge, tag, batch, port} from '../common/prelude';
 import {cursor} from '../common/cursor';
@@ -31,8 +32,8 @@ export const Back = {
 };
 
 // Action to send up to parent, notifying of recipe added to DB.
-const ReceiptAddRecipe = recipe => ({
-  type: 'ReceiptAddRecipe',
+const AddedRecipe = recipe => ({
+  type: 'AddedRecipe',
   recipe
 });
 
@@ -70,12 +71,6 @@ export const Alert = compose(TagBanner, Banner.AlertDismissable);
 export const Notify = compose(TagBanner, Banner.Notify);
 export const AlertInvalid = TagBanner(Banner.AlertDismissable("Uh-oh! Invalid JSON."));
 
-// Attempt to publish a recipe to the database.
-const Publish = recipe => ({
-  type: 'Publish',
-  recipe
-});
-
 const TagProgress = source => ({
   type: 'Progress',
   source
@@ -84,6 +79,17 @@ const TagProgress = source => ({
 const Loading = TagProgress(Progress.Loading);
 const Loaded = TagProgress(Progress.Loaded);
 
+const TagOutbox = source => ({
+  type: 'Outbox',
+  source
+});
+
+const AddToOutbox = compose(TagOutbox, Outbox.Add);
+const RemoveFromOutbox = compose(TagOutbox, Outbox.Remove);
+
+// Attempt to send everything in outbox.
+const SendOutbox = {type: 'SendOutbox'};
+
 // Init and update functions
 
 export const init = () => {
@@ -91,6 +97,7 @@ export const init = () => {
   const [textarea, textareaFx] = Input.init('', null, placeholder);
   const [banner, bannerFx] = Banner.init();
   const [progress, progressFx] = Progress.init();
+  const [outbox, outboxFx] = Outbox.init();
 
   return [
     {
@@ -98,11 +105,13 @@ export const init = () => {
       isOpen: false,
       banner,
       textarea,
-      progress
+      progress,
+      outbox
     },
     textareaFx.map(TextareaAction),
     bannerFx.map(TagBanner),
-    progressFx.map(TagProgress)
+    progressFx.map(TagProgress),
+    outboxFx.map(TagOutbox)
   ];
 };
 
@@ -115,6 +124,10 @@ export const update = (model, action) =>
   updateTextarea(model, action.source) :
   action.type === 'Progress' ?
   updateProgress(model, action.source) :
+  action.type === 'Outbox' ?
+  updateOutbox(model, action.source) :
+  action.type === 'SendOutbox' ?
+  sendOutbox(model) :
   action.type === 'Submit' ?
   submit(model, action.recipe) :
   action.type === 'Put' ?
@@ -125,40 +138,52 @@ export const update = (model, action) =>
     puttedOk(model, action.result.value) :
     puttedError(model, action.result.error)
   ) :
-  action.type === 'Publish' ?
-  publish(model, action.recipe) :
   action.type === 'Configure' ?
   [merge(model, {origin: action.origin}), Effects.none] :
   Unknown.update(model, action);
 
 const submit = (model, recipeString) => {
-  // We send an Effect up so that if an error is caused further down the line,
-  // it doesn't get caught by this try block.
+  // Make sure we don't actually return from within the try/catch arm.
+  // We want any errors not associated with the parse to bubble up without
+  // being caught.
+  let actions;
   try {
     const recipe = JSON.parse(recipeString);
-    return [model, Effects.receive(Publish(recipe))];
+    actions = [
+      Loading,
+      AddToOutbox(recipe._id, recipe),
+      SendOutbox
+    ];
   } catch (e) {
-    return [model, Effects.receive(AlertInvalid)];
+    actions = [AlertInvalid];
   }
+
+  return batch(update, model, actions);
 }
 
-const publish = (model, recipe) =>
-  batch(update, model, [
-    Loading,
-    Put(templateRecipePut(model.origin, recipe._id), recipe)
-  ]);
-
+const sendOutbox = model => {
+  // Create a list of put requests from recipes in outbox.
+  const puts = Outbox
+    .values(model.outbox)
+    .map(recipe =>
+      Put(templateRecipePut(model.origin, recipe._id), recipe));
+  return batch(update, model, puts);
+}
 
 const put = (model, url, body) => [
   model,
   Request.put(url, body).map(Putted)
 ];
 
-const puttedOk = (model, recipe) => {
+const puttedOk = (model, receipt) => {
+  const id = receipt.id;
+  const recipe = Outbox.get(model.outbox, id);
+
   // Cleanup
   const [next, fx] = batch(update, model, [
     Loaded,
-    Clear
+    Clear,
+    RemoveFromOutbox(id)
   ]);
 
   return [
@@ -166,7 +191,7 @@ const puttedOk = (model, recipe) => {
     Effects.batch([
       fx,
       // Notify parent
-      Effects.receive(ReceiptAddRecipe(recipe))
+      Effects.receive(AddedRecipe(recipe))
     ])
   ];
 }
@@ -196,6 +221,13 @@ const updateProgress = cursor({
   set: (model, progress) => merge(model, {progress}),
   update: Progress.update,
   tag: TagProgress
+});
+
+const updateOutbox = cursor({
+  get: model => model.outbox,
+  set: (model, outbox) => merge(model, {outbox}),
+  update: Outbox.update,
+  tag: TagOutbox
 });
 
 // View

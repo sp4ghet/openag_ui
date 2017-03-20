@@ -12,7 +12,7 @@ import {cursor} from './common/cursor';
 import {classed, toggle} from './common/attr';
 import {localize} from './common/lang';
 import {compose, constant} from './lang/functional';
-import * as RecipesForm from './recipes/form';
+import * as Form from './recipes/form';
 import * as Recipe from './recipe';
 
 // Actions and tagging functions
@@ -36,22 +36,22 @@ const AlertRefreshable = compose(TagBanner, Banner.AlertRefreshable);
 const AlertDismissable = compose(TagBanner, Banner.AlertDismissable);
 const FailRecipeStart = AlertDismissable("Couldn't start recipe");
 
-const TagRecipesForm = action =>
+const TagForm = action =>
   action.type === 'Back' ?
   ActivatePanel(null) :
-  action.type === 'ReceiptAddRecipe' ?
-  ReceiptAddRecipe(action.recipe) :
-  RecipesFormAction(action);
+  action.type === 'AddedRecipe' ?
+  AddedRecipe(action.recipe) :
+  FormAction(action);
 
-const ConfigureRecipesForm = compose(TagRecipesForm, RecipesForm.Configure);
+const ConfigureForm = compose(TagForm, Form.Configure);
 
-const RecipesFormAction = action => ({
-  type: 'RecipesForm',
+const FormAction = action => ({
+  type: 'Form',
   source: action
 });
 
-const ClearRecipesForm = RecipesFormAction(RecipesForm.Clear);
-const AlertRecipesForm = compose(RecipesFormAction, RecipesForm.Alert);
+const ClearForm = FormAction(Form.Clear);
+const AlertForm = compose(FormAction, Form.Alert);
 
 const RecipeAction = (id, action) =>
   action.type === 'Activate' ?
@@ -72,8 +72,8 @@ export const Configure = origin => ({
   origin
 });
 
-const ReceiptAddRecipe = recipe => ({
-  type: 'ReceiptAddRecipe',
+const AddedRecipe = recipe => ({
+  type: 'AddedRecipe',
   recipe
 });
 
@@ -123,7 +123,7 @@ const NoOp = Indexed.NoOp;
 // Model, update and init
 
 export const init = () => {
-  const [recipesForm, recipesFormFx] = RecipesForm.init();
+  const [form, formFx] = Form.init();
   const [banner, bannerFx] = Banner.init();
 
   return [
@@ -137,11 +137,11 @@ export const init = () => {
       order: [],
       // Index all recipes by ID
       entries: {},
-      recipesForm,
+      form,
       banner
     },
     Effects.batch([
-      recipesFormFx.map(TagRecipesForm),
+      formFx.map(TagForm),
       bannerFx.map(TagBanner)
     ])
   ];
@@ -164,11 +164,11 @@ const updateBanner = cursor({
   tag: TagBanner
 });
 
-const updateRecipesForm = cursor({
-  get: model => model.recipesForm,
-  set: (model, recipesForm) => merge(model, {recipesForm}),
-  update: RecipesForm.update,
-  tag: TagRecipesForm
+const updateForm = cursor({
+  get: model => model.form,
+  set: (model, form) => merge(model, {form}),
+  update: Form.update,
+  tag: TagForm
 });
 
 // Send restore GET request to _all_docs url.
@@ -193,9 +193,9 @@ const restoredError = (model, error) => {
   return update(model, AlertRefreshable(message));
 }
 
-const receiptAddRecipe = (model, value) =>
+const addedRecipe = (model, recipe) =>
   batch(update, model, [
-    InsertRecipe(model, recipe),
+    InsertRecipe(recipe),
     ActivatePanel(null),
     Notify(localize('Recipe Added'))
   ]);
@@ -228,7 +228,7 @@ const configure = (model, origin) => {
   const next = merge(model, {origin});
   return batch(update, next, [
     RestoreRecipes,
-    ConfigureRecipesForm(origin)
+    ConfigureForm(origin)
   ]);
 }
 
@@ -237,8 +237,8 @@ export const update = (model, action) =>
   updateIndexed(model, action.source) :
   action.type === 'Banner' ?
   updateBanner(model, action.source) :
-  action.type === 'RecipesForm' ?
-  updateRecipesForm(model, action.source) :
+  action.type === 'Form' ?
+  updateForm(model, action.source) :
   action.type === 'Modal' ?
   updateModal(model, action.source) :
   action.type === 'NoOp' ?
@@ -251,8 +251,8 @@ export const update = (model, action) =>
     restoredOk(model, action.result.value) :
     restoredError(model, action.result.error)
   ) :
-  action.type === 'ReceiptAddRecipe' ?
-  receiptAddRecipe(model, action.recipe) :
+  action.type === 'AddedRecipe' ?
+  addedRecipe(model, action.recipe) :
   action.type === 'InsertRecipe' ?
   insertRecipe(model, action.recipe) :
   action.type === 'StartByID' ?
@@ -267,7 +267,7 @@ export const update = (model, action) =>
 
 export const view = (model, address) => {
   const sendModalClose = onModalClose(address);
-  const sendActivateRecipeForm = onRecipeForm(address);
+  const sendActivateForm = onForm(address);
   return html.div({
     id: 'recipes-modal',
     className: 'modal',
@@ -306,8 +306,8 @@ export const view = (model, address) => {
             }, [
               html.a({
                 className: 'recipes-create-icon',
-                onTouchStart: sendActivateRecipeForm,
-                onMouseDown: sendActivateRecipeForm
+                onTouchStart: sendActivateForm,
+                onMouseDown: sendActivateForm
               })
             ])
           ]),
@@ -333,9 +333,9 @@ export const view = (model, address) => {
         ]),
         thunk(
           'recipes-form',
-          RecipesForm.view,
-          model.recipesForm,
-          forward(address, TagRecipesForm),
+          Form.view,
+          model.form,
+          forward(address, TagForm),
           model.activePanel === 'form'
         )
       ])
@@ -345,7 +345,7 @@ export const view = (model, address) => {
 
 const onModalClose = annotate(Modal.onClose, TagModal);
 
-const onRecipeForm = port(event => {
+const onForm = port(event => {
   event.preventDefault();
   return ActivatePanel('form');
 })
