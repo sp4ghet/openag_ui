@@ -200,10 +200,13 @@ const addedRecipe = (model, recipe) =>
     Notify(localize('Recipe Added'))
   ]);
 
-const insertRecipe = (model, recipe) => [
-  Indexed.insert(model, recipe._id, recipe, Indexed.compareValue),
-  Effects.none
-];
+const insertRecipe = (model, recipe) => {
+  const item = Recipe.fromDoc(recipe);
+  return [
+    Indexed.insert(model, item.id, item),
+    Effects.none
+  ];
+}
 
 // Activate recipe by id
 const startByID = (model, id) => {
