@@ -1,10 +1,13 @@
 {
-  "root_url": "",
-
-  "api_url": "{{root_url}}/_openag/api/0.0.1",
-  "origin_url": "{{root_url}}",
+  "root_url": null,
+  "origin_url": "{{root_url}}:5984",
+  "api_url": "{{origin_url}}/_openag/api/0.0.1",
   "start_recipe_url": "{{api_url}}/service/environments/{{environment}}/start_recipe",
   "stop_recipe_url": "{{api_url}}/service/environments/{{environment}}/stop_recipe",
+
+  "demo": {
+    "image_url": "{{root_url}}/img.jpg?timestamp={{timestamp}}"
+  },
 
   "environmental_data_point": {
     "local": "environmental_data_point",
@@ -13,12 +16,14 @@
     "origin_range": "{{origin_url}}/environmental_data_point/_design/openag/_view/by_timestamp?startkey={{startkey}}&endkey={{endkey}}&limit={{limit}}&descending={{descending}}&stale=update_after",
     "origin_by_variable_csv": "{{origin_url}}/environmental_data_point/_design/openag/_list/csv/by_variable?group_level={{group_level}}&startkey={{startkey}}&endkey={{endkey}}&limit={{limit}}&descending={{descending}}&stale=update_after",
     "timelapse": "{{origin_url}}/environmental_data_point/{{recipe_start_id}}/timelapse",
+    "image": "{{origin_url}}/environmental_data_point/{{id}}/image",
     "changes": "{{origin_url}}/environmental_data_point/_changes?feed=longpoll&include_docs=true&heartbeat=true&since=now"
   },
 
   "recipes": {
-    "local": "recipes",
-    "origin": "{{origin_url}}/recipes"
+    "origin": "{{origin_url}}/recipes",
+    "doc": "{{origin_url}}/recipes/{{id}}",
+    "all_docs": "{{origin_url}}/recipes/_all_docs?include_docs=true"
   },
 
   "environments": {
@@ -33,9 +38,9 @@
   "app": {
     "local": "openag",
     "state_id": "state",
-    "default_state": "chart",
+    "default_state": "dashboard",
     "show_nav": true,
-    "show_dashboard": false,
+    "show_dashboard": true,
     "show_chart": true,
     "show_controls": true
   },

@@ -47,24 +47,33 @@ const readResponseJSON = response =>
 const readFailure = error =>
   Result.error(localize('Uh-oh! No response from the server.'));
 
-const getFetch = url => {
-  const headers = new Headers({
-    'Content-Type': 'application/json',
-  });
+// Create an instance of JSON headers for the Request helper functions below
+// to share.
+const JSON_HEADERS = new Headers({
+  'Content-Type': 'application/json',
+});
+
+const requestGet = url => {
   const request = new Request(url, {
     method: 'GET',
-    headers
+    headers: JSON_HEADERS
   });
   return fetch(request).then(readResponseJSON, readFailure);
 }
 
-const postFetch = (url, body) => {
-  const headers = new Headers({
-    'Content-Type': 'application/json',
-  });
+const requestPost = (url, body) => {
   const request = new Request(url, {
     method: 'POST',
-    headers,
+    headers: JSON_HEADERS,
+    body: JSON.stringify(body)
+  });
+  return fetch(request).then(readResponseJSON, readFailure);
+}
+
+const requestPut = (url, body) => {
+  const request = new Request(url, {
+    method: 'PUT',
+    headers: JSON_HEADERS,
     body: JSON.stringify(body)
   });
   return fetch(request).then(readResponseJSON, readFailure);
@@ -74,12 +83,19 @@ const postFetch = (url, body) => {
 // You'll want to use the `.map()` method on the return value to map this
 // into an action.
 export const get = url => Effects.perform(new Task(succeed => {
-  getFetch(url).then(succeed);
+  requestGet(url).then(succeed);
 }));
 
 // Returns post effect
 // You'll want to use the `.map()` method on the return value to map this
 // into an action.
 export const post = (url, body) => Effects.perform(new Task(succeed => {
-  postFetch(url, body).then(succeed);
+  requestPost(url, body).then(succeed);
+}));
+
+// Returns put effect
+// You'll want to use the `.map()` method on the return value to map this
+// into an action.
+export const put = (url, body) => Effects.perform(new Task(succeed => {
+  requestPut(url, body).then(succeed);
 }));

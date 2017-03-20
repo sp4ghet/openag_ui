@@ -1,8 +1,8 @@
 import {html, forward, Effects, Task, thunk} from 'reflex';
 import * as Config from '../openag-config.json';
-import PouchDB from 'pouchdb-browser';
 import * as Template from './common/stache';
 import * as Database from './common/database';
+import * as Request from './common/request';
 import * as Indexed from './common/indexed';
 import * as Unknown from './common/unknown';
 import * as Banner from './common/banner';
@@ -12,10 +12,8 @@ import {cursor} from './common/cursor';
 import {classed, toggle} from './common/attr';
 import {localize} from './common/lang';
 import {compose, constant} from './lang/functional';
-import * as RecipesForm from './recipes/form';
+import * as Form from './recipes/form';
 import * as Recipe from './recipe';
-
-const DB = new PouchDB(Config.recipes.local);
 
 // Actions and tagging functions
 
@@ -38,20 +36,22 @@ const AlertRefreshable = compose(TagBanner, Banner.AlertRefreshable);
 const AlertDismissable = compose(TagBanner, Banner.AlertDismissable);
 const FailRecipeStart = AlertDismissable("Couldn't start recipe");
 
-const TagRecipesForm = action =>
+const TagForm = action =>
   action.type === 'Back' ?
   ActivatePanel(null) :
-  action.type === 'Submitted' ?
-  Put(action.recipe) :
-  RecipesFormAction(action);
+  action.type === 'AddedRecipe' ?
+  AddedRecipe(action.recipe) :
+  FormAction(action);
 
-const RecipesFormAction = action => ({
-  type: 'RecipesForm',
+const ConfigureForm = compose(TagForm, Form.Configure);
+
+const FormAction = action => ({
+  type: 'Form',
   source: action
 });
 
-const ClearRecipesForm = RecipesFormAction(RecipesForm.Clear);
-const AlertRecipesForm = compose(RecipesFormAction, RecipesForm.Alert);
+const ClearForm = FormAction(Form.Clear);
+const AlertForm = compose(FormAction, Form.Alert);
 
 const RecipeAction = (id, action) =>
   action.type === 'Activate' ?
@@ -72,7 +72,18 @@ export const Configure = origin => ({
   origin
 });
 
-// Restore recipes in-memory from PouchDB
+const AddedRecipe = recipe => ({
+  type: 'AddedRecipe',
+  recipe
+});
+
+// Insert recipe into model
+const InsertRecipe = recipe => ({
+  type: 'InsertRecipe',
+  recipe
+});
+
+// Restore recipes by fetching over HTTP
 const RestoreRecipes = {type: 'RestoreRecipes'};
 
 // Response from recipe restore
@@ -80,14 +91,6 @@ const RestoredRecipes = result => ({
   type: 'RestoredRecipes',
   result
 });
-
-const Put = Database.Put;
-const Putted = Database.Putted;
-
-// Request database sync
-const Sync = {type: 'Sync'};
-// Confirm sync.
-const Synced = Database.Synced;
 
 export const Open = TagModal(Modal.Open);
 export const Close = TagModal(Modal.Close);
@@ -120,7 +123,7 @@ const NoOp = Indexed.NoOp;
 // Model, update and init
 
 export const init = () => {
-  const [recipesForm, recipesFormFx] = RecipesForm.init();
+  const [form, formFx] = Form.init();
   const [banner, bannerFx] = Banner.init();
 
   return [
@@ -134,11 +137,11 @@ export const init = () => {
       order: [],
       // Index all recipes by ID
       entries: {},
-      recipesForm,
+      form,
       banner
     },
     Effects.batch([
-      recipesFormFx.map(TagRecipesForm),
+      formFx.map(TagForm),
       bannerFx.map(TagBanner)
     ])
   ];
@@ -161,38 +164,21 @@ const updateBanner = cursor({
   tag: TagBanner
 });
 
-const updateRecipesForm = cursor({
-  get: model => model.recipesForm,
-  set: (model, recipesForm) => merge(model, {recipesForm}),
-  update: RecipesForm.update,
-  tag: TagRecipesForm
+const updateForm = cursor({
+  get: model => model.form,
+  set: (model, form) => merge(model, {form}),
+  update: Form.update,
+  tag: TagForm
 });
 
-const sync = model => {
-  // @NOTE the strict equality check is important, since origin is allowed
-  // to be an empty string!
-  if (model.origin !== null) {
-    const origin = templateRecipesDatabase(model.origin);
-    return [model, Database.sync(DB, origin).map(Synced)];
-  }
-  else {
-    // @TODO this case should never happen, but perhaps we want to notify the
-    // user something went wrong?
-    console.warn('Recipe database sync attempted before origin was added to model');
-    return [model, Effects.none];
-  }
-}
+// Send restore GET request to _all_docs url.
+const restore = model => [
+  model,
+  Request.get(templateAllDocsUrl(model.origin)).map(RestoredRecipes)
+];
 
-const syncedOk = model =>
-  update(model, RestoreRecipes);
-
-const syncedError = model => {
-  const message = localize("Couldn't sync with the cloud. Using local database.");
-  return update(model, AlertDismissable(message));
-}
-
-const restoredOk = (model, docs) => {
-  const recipes = docs.map(Recipe.fromDoc);
+const restoredOk = (model, resp) => {
+  const recipes = Database.readAllDocs(resp).map(Recipe.fromDoc);
   const next = merge(model, {
     // Build an array of ordered recipe IDs
     order: Indexed.pluckID(recipes),
@@ -205,6 +191,21 @@ const restoredOk = (model, docs) => {
 const restoredError = (model, error) => {
   const message = localize("Hmm, couldn't read from your browser's database.");
   return update(model, AlertRefreshable(message));
+}
+
+const addedRecipe = (model, recipe) =>
+  batch(update, model, [
+    InsertRecipe(recipe),
+    ActivatePanel(null),
+    Notify(localize('Recipe Added'))
+  ]);
+
+const insertRecipe = (model, recipe) => {
+  const item = Recipe.fromDoc(recipe);
+  return [
+    Indexed.insert(model, item.id, item),
+    Effects.none
+  ];
 }
 
 // Activate recipe by id
@@ -226,31 +227,11 @@ const startByID = (model, id) => {
 const activatePanel = (model, id) =>
   [merge(model, {activePanel: id}), Effects.none];
 
-const put = (model, doc) => {
-  // Attempt to store it in DB.
-  return [model, Database.put(DB, doc).map(Putted)];
-}
-
-const puttedOk = (model, value) =>
-  batch(update, model, [
-    ClearRecipesForm,
-    RestoreRecipes,
-    Sync,
-    ActivatePanel(null),
-    Notify(localize('Recipe Added'))
-  ]);
-
-const puttedError = (model, error) => {
-  const action = AlertRecipesForm(String(error));
-  return update(model, action);
-}
-
 const configure = (model, origin) => {
   const next = merge(model, {origin});
-
   return batch(update, next, [
     RestoreRecipes,
-    Sync
+    ConfigureForm(origin)
   ]);
 }
 
@@ -259,40 +240,28 @@ export const update = (model, action) =>
   updateIndexed(model, action.source) :
   action.type === 'Banner' ?
   updateBanner(model, action.source) :
-  action.type === 'RecipesForm' ?
-  updateRecipesForm(model, action.source) :
+  action.type === 'Form' ?
+  updateForm(model, action.source) :
   action.type === 'Modal' ?
   updateModal(model, action.source) :
   action.type === 'NoOp' ?
   [model, Effects.none] :
-  action.type === 'Put' ?
-  put(model, action.value) :
-  action.type === 'Putted' ?
-  (
-    action.result.isOk ?
-    puttedOk(model, action.result.value) :
-    puttedError(model, action.result.error)
-  ) :
   action.type === 'RestoreRecipes' ?
-  [model, Database.restore(DB).map(RestoredRecipes)] :
+  restore(model) :
   action.type === 'RestoredRecipes' ?
   (
     action.result.isOk ?
     restoredOk(model, action.result.value) :
     restoredError(model, action.result.error)
   ) :
+  action.type === 'AddedRecipe' ?
+  addedRecipe(model, action.recipe) :
+  action.type === 'InsertRecipe' ?
+  insertRecipe(model, action.recipe) :
   action.type === 'StartByID' ?
   startByID(model, action.id) :
   action.type === 'ActivatePanel' ?
   activatePanel(model, action.id) :
-  action.type === 'Sync' ?
-  sync(model) :
-  action.type === 'Synced' ?
-  (
-    action.result.isOk ?
-    syncedOk(model) :
-    syncedError(model)
-  ) :
   action.type === 'Configure' ?
   configure(model, action.origin) :
   Unknown.update(model, action);
@@ -301,7 +270,7 @@ export const update = (model, action) =>
 
 export const view = (model, address) => {
   const sendModalClose = onModalClose(address);
-  const sendActivateRecipeForm = onRecipeForm(address);
+  const sendActivateForm = onForm(address);
   return html.div({
     id: 'recipes-modal',
     className: 'modal',
@@ -340,8 +309,8 @@ export const view = (model, address) => {
             }, [
               html.a({
                 className: 'recipes-create-icon',
-                onTouchStart: sendActivateRecipeForm,
-                onMouseDown: sendActivateRecipeForm
+                onTouchStart: sendActivateForm,
+                onMouseDown: sendActivateForm
               })
             ])
           ]),
@@ -367,9 +336,9 @@ export const view = (model, address) => {
         ]),
         thunk(
           'recipes-form',
-          RecipesForm.view,
-          model.recipesForm,
-          forward(address, TagRecipesForm),
+          Form.view,
+          model.form,
+          forward(address, TagForm),
           model.activePanel === 'form'
         )
       ])
@@ -379,14 +348,14 @@ export const view = (model, address) => {
 
 const onModalClose = annotate(Modal.onClose, TagModal);
 
-const onRecipeForm = port(event => {
+const onForm = port(event => {
   event.preventDefault();
   return ActivatePanel('form');
 })
 
 // Helpers
 
-const templateRecipesDatabase = origin =>
-  Template.render(Config.recipes.origin, {
+const templateAllDocsUrl = origin =>
+  Template.render(Config.recipes.all_docs, {
     origin_url: origin
   });

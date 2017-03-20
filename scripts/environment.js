@@ -8,7 +8,7 @@ import * as Result from './common/result';
 import * as Unknown from './common/unknown';
 import {cursor} from './common/cursor';
 import {constant, compose} from './lang/functional';
-import {findRunningRecipe, findAirTemperature} from './environment/doc';
+import {findRunningRecipe, findAirTemperature, findAerialImage} from './environment/doc';
 import * as Chart from './environment/chart';
 import * as Dashboard from './environment/dashboard';
 import * as Controls from './environment/controls';
@@ -44,8 +44,9 @@ export const ActivateState = id => ({
 });
 
 // Configure action received from parent.
-export const Configure = (environmentID, environmentName, api, origin) => ({
+export const Configure = (environmentID, environmentName, root, api, origin) => ({
   type: 'Configure',
+  root,
   api,
   origin,
   id: environmentID,
@@ -84,6 +85,7 @@ const DashboardAction = action => ({
   source: action
 });
 
+const UpdateAerialImage = compose(DashboardAction, Dashboard.UpdateAerialImage);
 const ConfigureDashboard = compose(DashboardAction, Dashboard.Configure);
 const SetDashboardRecipe = compose(DashboardAction, Dashboard.SetRecipe);
 const decodeDashboardRecipe = compose(DashboardAction, Dashboard.decodeRecipe);
@@ -213,6 +215,11 @@ const updateBacklog = Result.updater(
       actions.push(SetDashboardAirTemperature(airTemperature));
     }
 
+    const aerialImage = findAerialImage(data);
+    if (aerialImage) {
+      actions.push(UpdateAerialImage(aerialImage));
+    }
+
     actions.push(GetChanges);
 
     return batch(update, model, actions);
@@ -267,6 +274,11 @@ const gotChangesOk = (model, record) => {
     actions.push(SetDashboardAirTemperature(airTemperature));
   }
 
+  const aerialImage = findAerialImage(data);
+  if (aerialImage) {
+    actions.push(UpdateAerialImage(aerialImage));
+  }
+
   actions.push(GetChanges);
 
   return batch(update, model, actions);
@@ -282,7 +294,7 @@ const gotChangesError = (model, error) => {
   ];
 }
 
-const configure = (model, {api, origin, id, name}) => {
+const configure = (model, {root, api, origin, id, name}) => {
   const next = merge(model, {
     origin,
     id,
@@ -294,7 +306,7 @@ const configure = (model, {api, origin, id, name}) => {
   return batch(update, next, [
     // Forward configuration down to submodules.
     ConfigureChart(origin),
-    ConfigureDashboard(origin),
+    ConfigureDashboard(root, origin),
     ConfigureControls(api, id),
     // Now that we have the origin, get the backlog.
     GetBacklog

@@ -3,6 +3,8 @@
 import {Effects, Task} from 'reflex';
 import * as Result from '../common/result';
 import {compose} from '../lang/functional';
+import reject from 'lodash/reject';
+import map from 'lodash/map';
 
 export const Get = id => ({
   type: 'Get',
@@ -55,8 +57,10 @@ export const Restored = result => ({
 });
 
 // Mapping functions to just get the docs from an allDocs response.
-const readDocFromRow = row => row.doc;
-const readDocs = database => database.rows.map(readDocFromRow);
+export const readDocFromRow = row => row.doc;
+export const isDesignDoc = doc => doc._id.indexOf('_design/') !== -1;
+export const readAllDocs = database =>
+  reject(map(database.rows, readDocFromRow), isDesignDoc);
 
 // Request in-memory restore from DB
 // Returns an effect.
@@ -71,7 +75,7 @@ export const restore = db =>
         startkey: 'design_\uffff'
       })
       .then(
-        compose(Result.ok, readDocs),
+        compose(Result.ok, readAllDocs),
         Result.error
       )
       .then(succeed);

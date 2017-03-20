@@ -1011,6 +1011,35 @@ p {
   box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.12), 0px 1px 2px 0px rgba(0,0,0,0.24);
 }
 
+/* Progress - loading bar
+----------------------------------------------------------------------------- */
+
+.progress {
+  background: url(stripes-dark-blue.png) repeat left center #00a5ed;
+  background-size: auto 40px;
+  animation: 1000ms linear 0ms infinite progress-crawl;
+  height: 12px;
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 160ms linear;
+  pointer-events: none;
+}
+
+.progress-is-loading {
+  opacity: 1;
+}
+
+@keyframes progress-crawl {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 86px 0;
+  }
+}
+
 /* FTU - First Time Use
 ----------------------------------------------------------------------------- */
 
