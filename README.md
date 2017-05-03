@@ -7,7 +7,27 @@ The control panel for the OpenAg Food Computer (v1.1 and above).
 Using
 -----
 
-Each Food Computer will ship with a copy of the UI. Visiting a Food Computer's IP address will launch the UI. You shouldn't need to use this repository unless you're doing development work on the UI.
+
+__Run all the shell commands inside the Raspberry Pi.__
+
+#### Optional: install nodejs/npm
+tl;dr: [Installing Node.js via package manager](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
+
+`curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+sudo apt-get install -y nodejs`
+
+### Get the code
+
+`$ git clone https://github.com/OpenAgInitiative/openag_ui`
+
+### Build and Deploy the UI
+```
+$ cd openag_ui
+$ npm install
+$ npm run couchapp_deploy --app_db_url="http://localhost:5984/app"
+```
+### Access the UI
+Open your browser to `http://${IP_OF_FOOD_COMPUTER}:5984/app/_design/app/_rewrite`.
 
 
 Browser Support
@@ -65,6 +85,7 @@ Deploying CouchApp
 
 When doing development, you can deploy the result as a "CouchApp" -- a set of attachments stored in a CouchDB design document. This is how we host the UI on the Food Computer.
 
-    grunt couchapp_deploy --app_db_url="http://raspberrypi:5984/app"
+    npm run couchapp_deploy --app_db_url="http://localhost:5984/app"
 
 The `app_db_url` parameter is optional, and will default to `http://raspberrypi:5984/app`.
+The UI should be available at `http://${IP_OF_FOOD_COMPUTER}:5984/app/_design/app/_rewrite`
