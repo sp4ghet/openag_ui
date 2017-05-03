@@ -40,10 +40,10 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "grunt build",
-    "develop": "grunt develop",
-    "watch": "grunt watch",
-    "couchapp_deploy": "grunt couchapp_deploy"
+    "build": "./node_modules/grunt-cli/bin/grunt build",
+    "develop": "./node_modules/grunt-cli/bin/grunt develop",
+    "watch": "./node_modules/grunt-cli/bin/grunt watch",
+    "couchapp_deploy": "./node_modules/grunt-cli/bin/grunt couchapp_deploy"
   },
   "keywords": [
     "openag",
