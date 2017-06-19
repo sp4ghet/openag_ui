@@ -98,68 +98,56 @@
 
   "actuators": [
     {
-      "id": "led_red_1",
-      "topic": "{{api}}/topic/actuators/led_red_1/cmd",
+      "id": "light_intensity_red",
+      "topic": "{{api}}/topic/environments/environment_1/light_intensity_red/commanded",
       "title": "Red Light",
       "type": "pwm_actuator"
     },
     {
-      "id": "led_blue_1",
-      "topic": "{{api}}/topic/actuators/led_blue_1/cmd",
+      "id": "light_intensity_blue",
+      "topic": "{{api}}/topic/environments/environment_1/light_intensity_blue/commanded",
       "title": "Blue Light",
       "type": "pwm_actuator"
     },
     {
-      "id": "led_white_1",
-      "topic": "{{api}}/topic/actuators/led_white_1/cmd",
+      "id": "light_intensity_white",
+      "topic": "{{api}}/topic/environments/environment_1/light_intensity_white/commanded",
       "title": "White Light",
       "type": "pwm_actuator"
     },
     {
-      "id": "pump_1_nutrient_a_1",
-      "topic": "{{api}}/topic/actuators/pump_1_nutrient_a_1/cmd",
+      "id": "nutrient_flora_duo_a",
+      "topic": "{{api}}/topic/environments/environment_1/nutrient_flora_duo_a/commanded",
       "title": "Nutrient A",
       "type": "binary_actuator"
     },
     {
-      "id": "pump_2_nutrient_b_1",
-      "topic": "{{api}}/topic/actuators/pump_2_nutrient_b_1/cmd",
+      "id": "nutrient_flora_duo_b",
+      "topic": "{{api}}/topic/environments/environment_1/nutrient_flora_duo_b/commanded",
       "title": "Nutrient B",
       "type": "binary_actuator"
     },
     {
-      "id": "pump_3_ph_up_1",
-      "topic": "{{api}}/topic/actuators/pump_3_ph_up_1/cmd",
-      "title": "pH Up",
+      "id": "water_ph",
+      "topic": "{{api}}/topic/environments/environment_1/water_potential_hydrogen/commanded",
+      "title": "Water pH",
       "type": "binary_actuator"
     },
     {
-      "id": "pump_4_ph_down_1",
-      "topic": "{{api}}/topic/actuators/pump_4_ph_down_1/cmd",
-      "title": "pH Down",
+      "id": "water_level",
+      "topic": "{{api}}/topic/environments/environment_1/water_level_high/commanded",
+      "title": "Water Level",
       "type": "binary_actuator"
     },
     {
-      "id": "pump_5_water_1",
-      "topic": "{{api}}/topic/actuators/pump_5_water_1/cmd",
-      "title": "Water",
+      "id": "air_temperature",
+      "topic": "{{api}}/topic/environments/environment_1/air_temperature/commanded",
+      "title": "Air Temperature",
       "type": "binary_actuator"
     },
     {
-      "id": "heater_core_1_1",
-      "topic": "{{api}}/topic/actuators/heater_core_1_1/cmd",
-      "title": "Heater Core 1",
-      "type": "binary_actuator"
-    },
-    {
-      "id": "heater_core_2_1",
-      "topic": "{{api}}/topic/actuators/heater_core_2_1/cmd",
-      "title": "Heater Core 2",
-      "type": "binary_actuator"
-    },
-    {
-      "id": "air_flush_1",
-      "topic": "{{api}}/topic/actuators/air_flush_1/cmd",
+      "id": "air_flush_on",
+      "topic": "{{api}}/topic/environments/environment_1/air_flush_on/commanded",
       "title": "Air Flush",
       "type": "binary_actuator"
     }
