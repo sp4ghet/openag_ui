@@ -64,6 +64,14 @@
       "color": "#ff8300"
     },
     {
+      "variable": "air_oxygen",
+      "title": "Air O2",
+      "unit": "%",
+      "min": 0,
+      "max": 100,
+      "color": "#75a4ef"
+    },
+    {
       "variable": "water_temperature",
       "title": "Water Temperature",
       "unit": "\u00B0",
