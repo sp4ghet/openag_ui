@@ -88,12 +88,15 @@ export const view = (model, address, environmentID) => {
               {
                 className: 'menu-list'
               },
-              Config.chart.map(config => renderExport(
-                model.origin,
-                environmentID,
-                config.variable,
-                config.title
-              ))
+              [renderExportAll(model.origin, environmentID)].concat(
+                Config.chart.map(config => renderExport(
+                  model.origin,
+                  environmentID,
+                  config.variable,
+                  config.title
+                  )
+                )
+              )
             )
           ])
         ])
@@ -114,11 +117,30 @@ const renderExport = (origin, environmentID, variable, title) =>
     ])
   ]);
 
+const renderExportAll = (origin, environmentID) =>
+  html.li(null, [
+    html.a({
+      target: '_blank',
+      href: templateCsvUrlAll(origin, environmentID)
+    }, [
+      "All Variables"
+      ]
+    )
+  ]);
+
 const templateCsvUrl = (origin, environmentID, variable) =>
   Template.render(Config.environmental_data_point.origin_by_variable_csv, {
     origin_url: origin,
     startkey: JSON.stringify([environmentID, 'measured', variable, {}]),
     endkey: JSON.stringify([environmentID, 'measured', variable]),
+    limit: MAX_DATAPOINTS,
+    group_level: 4,
+    descending: true
+  });
+
+const templateCsvUrlAll = (origin, environmentID) =>
+  Template.render(Config.environmental_data_point.origin_all_csv, {
+    origin_url: origin,
     limit: MAX_DATAPOINTS,
     group_level: 4,
     descending: true
