@@ -142,6 +142,5 @@ const templateCsvUrlAll = (origin, environmentID) =>
   Template.render(Config.environmental_data_point.origin_all_csv, {
     origin_url: origin,
     limit: MAX_DATAPOINTS,
-    group_level: 4,
     descending: true
   });
