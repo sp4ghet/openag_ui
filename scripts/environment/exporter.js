@@ -110,7 +110,7 @@ const onCloseModal = annotate(Modal.onClose, TagModal);
 const renderExport = (origin, environmentID, variable, title) =>
   html.li(null, [
     html.a({
-      target: '_blank',
+      download: `${variable}.csv`,
       href: templateCsvUrl(origin, environmentID, variable)
     }, [
       title
@@ -120,7 +120,7 @@ const renderExport = (origin, environmentID, variable, title) =>
 const renderExportAll = (origin, environmentID) =>
   html.li(null, [
     html.a({
-      target: '_blank',
+      download: "all_vars.csv",
       href: templateCsvUrlAll(origin, environmentID)
     }, [
       "All Variables"
