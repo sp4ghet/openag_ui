@@ -297,7 +297,7 @@ const postStopStartRecipe = (model, environmentID, id) => {
 
   return [
     model,
-    Request.post(url, {}).map(RecipeStopStartPosted)
+    Request.post(url, null).map(RecipeStopStartPosted)
   ];
 }
 
