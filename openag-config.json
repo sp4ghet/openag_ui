@@ -6,7 +6,8 @@
   "stop_recipe_url": "{{api_url}}/service/environments/{{environment}}/stop_recipe",
 
   "demo": {
-    "image_url": "{{root_url}}/img.jpg?timestamp={{timestamp}}"
+    "latest_image": "{{origin_url}}/environmental_data_point/_design/openag/_view/by_variable?group_level=3",
+    "image_url": "{{origin_url}}/environmental_data_point/{{latest_image}}/image"
   },
 
   "environmental_data_point": {
@@ -17,7 +18,7 @@
     "origin_by_variable_csv": "{{origin_url}}/environmental_data_point/_design/openag/_list/csv/by_variable?group_level={{group_level}}&startkey={{startkey}}&endkey={{endkey}}&limit={{limit}}&descending={{descending}}&stale=update_after",
     "origin_all_csv": "{{origin_url}}/environmental_data_point/_design/openag/_list/csv/all_vars?&limit={{limit}}&descending={{descending}}&stale=update_after",
     "timelapse": "{{origin_url}}/environmental_data_point/{{recipe_start_id}}/timelapse",
-    "image": "{{origin_url}}/environmental_data_point/{{id}}/image",
+    "image": "{{origin_url}}/environmental_data_point/{{id}}/aerial_image",
     "changes": "{{origin_url}}/environmental_data_point/_changes?feed=longpoll&include_docs=true&heartbeat=true&since=now"
   },
 

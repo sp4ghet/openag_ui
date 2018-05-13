@@ -6,13 +6,14 @@ import {
   environmental_data_point as ENVIRONMENTAL_DATA_POINT,
   demo as DEMO
 } from '../../openag-config';
+import * as Request from '../common/request';
 import {compose, constant} from '../lang/functional';
 import {render as renderTemplate} from '../common/stache';
 import {update as updateUnknown} from '../common/unknown';
 import {localize} from '../common/lang';
 import * as Sidebar from './dashboard/sidebar';
 
-const REFRESH_TIMEOUT = 30 * 1000;
+const REFRESH_TIMEOUT = 3 * 1000;
 
 // Actions
 
@@ -73,6 +74,9 @@ const SetSidebarRecipe = compose(SidebarAction, Sidebar.SetRecipe);
 export const SetAirTemperature = compose(SidebarAction, Sidebar.SetAirTemperature);
 
 const RefreshImg = {type: 'RefreshImg'};
+const GetLatest = {type: 'GetLatestImage'};
+
+const AlwaysGetLatest = constant(GetLatest);
 const AlwaysRefreshImg = constant(RefreshImg);
 
 // Init and update
@@ -120,7 +124,7 @@ export const init = () => {
       sidebar,
       null
     ),
-    Effects.receive(RefreshImg)
+    Effects.receive(GetLatest)
   ];
 }
 
@@ -128,8 +132,12 @@ export const update = (model, action) =>
   action.type === 'UpdateAerialImage' ?
   // @HACK for wfp demo... pass
   [model, Effects.none] :
+  action.type === 'GetLatestImage' ?
+  FindLatestImageUUID(model) :
+  action.type === 'SwapImageID' ?
+  swapImageID(model, action.uuid) :
   action.type === 'RefreshImg' ?
-  refreshImg(model) :
+  refreshImg(model, action.view) :
   action.type === 'Sidebar' ?
   delegateSidebarUpdate(model, action.source) :
   action.type === 'SetRecipe' ?
@@ -139,6 +147,22 @@ export const update = (model, action) =>
   action.type === 'FinishLoading' ?
   finishLoading(model) :
   updateUnknown(model, action);
+
+const ParseImageUUID = (view) => {
+  const image = view.value.rows.find(row => row.key[2] === 'aerial_image')
+  console.log(image)
+  return ({
+  type: 'SwapImageID',
+  uuid: image.value._id
+})}
+
+const FindLatestImageUUID = model => {
+  const url = renderTemplate(DEMO.latest_image, {
+    origin_url: model.origin
+  })
+
+  return [model, Request.get(url).map(ParseImageUUID)]
+}
 
 const setRecipe = (model, id, name) => {
   // Update sidebar model with id and name
@@ -196,7 +220,7 @@ const finishLoading = model => [
   Effects.none
 ];
 
-const refreshImg = (model) => [
+const refreshImg = (model, uuid) => [
   new Model(
     Date.now(),
     model.root,
@@ -207,7 +231,7 @@ const refreshImg = (model) => [
     model.sidebar,
     model.imageID
   ),
-  Effects.perform(Task.sleep(REFRESH_TIMEOUT)).map(AlwaysRefreshImg)
+  Effects.perform(Task.sleep(REFRESH_TIMEOUT)).map(GetLatest)
 ];
 
 const swapImageID = (model, imageID) => [
@@ -221,7 +245,7 @@ const swapImageID = (model, imageID) => [
     model.sidebar,
     imageID
   ),
-  Effects.none
+  Effects.perform(Task.sleep(REFRESH_TIMEOUT)).map(AlwaysRefreshImg)
 ];
 
 const swapSidebar = (model, [sidebar, fx]) => [
@@ -318,8 +342,8 @@ const viewEmpty = (model, address) =>
 // Utils
 const templateImgUrl = model =>
   renderTemplate(DEMO.image_url, {
-    root_url: model.root,
-    timestamp: model.timestamp
+    origin_url: model.origin,
+    latest_image: model.imageID
   });
 
 const templateVideoUrl = model =>
